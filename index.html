@@ -1,0 +1,3491 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Карта навыков</title>
+    <meta name="description" content="Интерактивная карта навыков: работы по Blender, писательству и английскому." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Карта навыков" />
+    <meta
+      property="og:description"
+      content="Интерактивная карта навыков: работы по Blender, писательству и английскому."
+    />
+    <!-- Когда страница будет опубликована, добавь сюда картинку 1200x630 для превью в LinkedIn:
+    <meta property="og:image" content="https://.../preview.jpg" /> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&family=Fira+Sans+Extra+Condensed:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #070912;
+        --bg2: #0d1226;
+        --nebula1: #1c2450;
+        --nebula2: #2a1f4d;
+        --star: #bcd8ff;
+        --star-lit: #7fe3f5;
+        --gold: #e8c468;
+        --dim: #3a4266;
+        --text: #e7ecf7;
+        --text-dim: #8b93b8;
+        --line: #3d4a7a;
+        --line-lit: #6fd0e6;
+        --panel: #0b0f22ee;
+        --danger: #e2765f;
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) {
+          --bg: #070912;
+        }
+      }
+      :root[data-theme='dark'] {
+        --bg: #070912;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        height: 100%;
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      body {
+        margin: 0;
+        height: 100%;
+        min-height: 100vh;
+        background: var(--bg);
+        background-image:
+          radial-gradient(ellipse at 15% 15%, #1c4d52 0%, transparent 50%),
+          radial-gradient(ellipse at 85% 20%, #2a1f4d 0%, transparent 50%),
+          radial-gradient(ellipse at 30% 85%, #143a3f 0%, transparent 55%),
+          radial-gradient(ellipse at 80% 80%, var(--nebula2) 0%, transparent 55%),
+          radial-gradient(ellipse at 50% 100%, #10163a 0%, transparent 60%),
+          radial-gradient(1px 1px at 10% 20%, #ffffff99 1px, transparent 0),
+          radial-gradient(1px 1px at 80% 10%, #ffffff66 1px, transparent 0),
+          radial-gradient(1px 1px at 60% 70%, #ffffff77 1px, transparent 0),
+          radial-gradient(1px 1px at 25% 60%, #ffffff55 1px, transparent 0),
+          radial-gradient(1px 1px at 90% 55%, #ffffff88 1px, transparent 0),
+          radial-gradient(1px 1px at 45% 35%, #ffffff44 1px, transparent 0),
+          radial-gradient(1px 1px at 70% 90%, #ffffff66 1px, transparent 0);
+        background-repeat:
+          no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
+        background-size:
+          auto,
+          auto,
+          auto,
+          auto,
+          auto,
+          180px 180px,
+          220px 220px,
+          260px 260px,
+          140px 140px,
+          300px 300px,
+          200px 200px,
+          240px 240px;
+        color: var(--text);
+        font-family: 'Fira Sans Extra Condensed', system-ui, sans-serif;
+        overflow-x: hidden;
+      }
+      h1,
+      h2,
+      h3,
+      .disp {
+        font-family: 'Oswald', sans-serif;
+        letter-spacing: 0.02em;
+      }
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: calc(16px + env(safe-area-inset-top, 0px)) 20px 14px;
+        border-bottom: 1px solid #ffffff14;
+        flex-wrap: wrap;
+      }
+      .topbar .id {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .topbar input {
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid var(--dim);
+        color: var(--text);
+        font-family: 'Oswald', sans-serif;
+        font-size: 1.1rem;
+        padding: 4px 2px;
+        width: 180px;
+      }
+      .topbar input:focus {
+        outline: none;
+        border-color: var(--gold);
+      }
+      .levelchip {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border: 1px solid var(--dim);
+        border-radius: 3px;
+        font-size: 0.85rem;
+        color: var(--text-dim);
+      }
+      .levelchip b {
+        color: var(--gold);
+        font-family: 'Oswald', sans-serif;
+        font-size: 1.15rem;
+      }
+      .hexOrn {
+        width: 14px;
+        height: 14px;
+        border: 1px solid var(--dim);
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        display: inline-block;
+        margin: 0 4px;
+      }
+      .chev {
+        color: var(--dim);
+        font-size: 0.75rem;
+        letter-spacing: -2px;
+      }
+      .ornWrap {
+        display: inline-flex;
+        align-items: center;
+      }
+      .hint {
+        padding: 10px 20px;
+        font-size: 0.82rem;
+        color: var(--text-dim);
+        max-width: 640px;
+        line-height: 1.5;
+      }
+      .readout {
+        text-align: center;
+        padding: 10px 20px 6px;
+        min-height: 82px;
+      }
+      .readout .rname {
+        font-family: 'Oswald', sans-serif;
+        font-size: 1.5rem;
+        color: var(--gold);
+      }
+      .readout .rname b {
+        font-size: 2rem;
+        margin-left: 10px;
+        color: var(--gold);
+      }
+      .readout .rule {
+        width: 200px;
+        height: 1px;
+        margin: 8px auto;
+        background: linear-gradient(90deg, transparent, var(--line-lit), transparent);
+      }
+      .readout .rdesc {
+        font-size: 0.8rem;
+        color: var(--text-dim);
+        max-width: 520px;
+        margin: 0 auto;
+        line-height: 1.5;
+        min-height: 1.2em;
+      }
+      .skyWrap {
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        height: 62vh;
+        min-height: 380px;
+        overflow: hidden;
+        border-radius: 10px;
+        cursor: grab;
+        border: 1px solid #ffffff10;
+      }
+      .skyWrap.dragging {
+        cursor: grabbing;
+      }
+      svg#sky {
+        width: 100%;
+        height: 100%;
+        display: block;
+        touch-action: none;
+      }
+      #camera {
+        transition: transform 0.5s cubic-bezier(0.22, 0.9, 0.34, 1);
+      }
+      #camera.dragging {
+        transition: none;
+      }
+      .zoomCtl {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        z-index: 5;
+      }
+      .zoomCtl button {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid var(--dim);
+        background: #0b0f22cc;
+        color: var(--text);
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      .zoomCtl button:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+      .star {
+        cursor: pointer;
+      }
+      .star circle.core {
+        transition:
+          r 0.2s,
+          filter 0.2s;
+      }
+      .star:hover circle.core {
+        filter: brightness(1.4);
+      }
+      .star text {
+        font-family: 'Fira Sans Extra Condensed', sans-serif;
+        font-size: 13px;
+        fill: var(--text-dim);
+        pointer-events: none;
+      }
+      .star text.lvl {
+        font-family: 'Oswald', sans-serif;
+        fill: var(--gold);
+        font-size: 14px;
+      }
+      .constline {
+        stroke: var(--line);
+        stroke-width: 1;
+        fill: none;
+        opacity: 0.55;
+      }
+      .constline.lit {
+        stroke: var(--line-lit);
+        opacity: 0.9;
+        filter: drop-shadow(0 0 3px var(--line-lit));
+      }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 22px;
+        padding: 6px 20px 30px;
+        font-size: 0.78rem;
+        color: var(--text-dim);
+      }
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .legend i {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: #02040ccc;
+        display: none;
+        z-index: 20;
+        align-items: flex-end;
+        justify-content: center;
+      }
+      .overlay.open {
+        display: flex;
+      }
+      .panel {
+        width: 100%;
+        max-width: 520px;
+        max-height: 88vh;
+        overflow-y: auto;
+        background: var(--panel);
+        border: 1px solid var(--dim);
+        border-bottom: none;
+        border-radius: 14px 14px 0 0;
+        padding: 22px 22px calc(26px + env(safe-area-inset-bottom, 0px));
+        box-shadow: 0 -10px 40px #000a;
+      }
+      @media (min-width: 700px) {
+        .overlay {
+          align-items: center;
+        }
+        .panel {
+          border-radius: 14px;
+          border-bottom: 1px solid var(--dim);
+          max-height: 80vh;
+        }
+      }
+      .panel h2 {
+        margin: 0 0 4px;
+        font-size: 1.3rem;
+        color: var(--gold);
+      }
+      .panel .sub {
+        color: var(--text-dim);
+        font-size: 0.85rem;
+        margin-bottom: 16px;
+      }
+      .closeBtn {
+        float: right;
+        background: none;
+        border: 1px solid var(--dim);
+        color: var(--text-dim);
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+      .progressRow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 10px 0 18px;
+      }
+      .bar {
+        flex: 1;
+        height: 8px;
+        background: #ffffff14;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .bar > i {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--line-lit), var(--gold));
+      }
+      .tierRow {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+      .tierBtn {
+        padding: 6px 12px;
+        border-radius: 20px;
+        border: 1px solid var(--dim);
+        background: transparent;
+        color: var(--text-dim);
+        font-size: 0.8rem;
+        cursor: pointer;
+        font-family: 'Oswald', sans-serif;
+      }
+      .tierBtn.done {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+      .tierBtn.active {
+        background: var(--gold);
+        color: #161225;
+        border-color: var(--gold);
+      }
+      form.addForm {
+        border-top: 1px solid #ffffff14;
+        padding-top: 16px;
+        margin-top: 6px;
+        display: grid;
+        gap: 10px;
+      }
+      form.addForm label {
+        font-size: 0.78rem;
+        color: var(--text-dim);
+        display: block;
+        margin-bottom: 4px;
+      }
+      form.addForm input[type='text'],
+      form.addForm input[type='date'],
+      form.addForm select {
+        width: 100%;
+        padding: 9px 10px;
+        background: #ffffff0c;
+        border: 1px solid var(--dim);
+        border-radius: 6px;
+        color: var(--text);
+        font-size: 0.9rem;
+      }
+      form.addForm input[type='file'] {
+        color: var(--text-dim);
+        font-size: 0.8rem;
+      }
+      .btn {
+        padding: 10px 16px;
+        background: var(--gold);
+        color: #1a1330;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: 'Oswald', sans-serif;
+        letter-spacing: 0.03em;
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      .entries {
+        margin-top: 18px;
+        display: grid;
+        gap: 10px;
+      }
+      .entry {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        border: 1px solid #ffffff14;
+        border-radius: 8px;
+        padding: 8px;
+        background: #ffffff06;
+      }
+      .entry img,
+      .entry video {
+        width: 52px;
+        height: 52px;
+        object-fit: cover;
+        border-radius: 6px;
+        background: #000;
+      }
+      .entry .meta {
+        flex: 1;
+        min-width: 0;
+      }
+      .entry .meta .t {
+        font-size: 0.85rem;
+      }
+      .entry .meta .d {
+        font-size: 0.72rem;
+        color: var(--text-dim);
+      }
+      .empty {
+        color: var(--text-dim);
+        font-size: 0.85rem;
+        font-style: italic;
+        padding: 10px 0;
+      }
+      .stubNote {
+        color: var(--text-dim);
+        font-size: 0.88rem;
+        line-height: 1.6;
+        padding: 8px 0 4px;
+      }
+
+      body {
+        font-size: 17px;
+      }
+      .lbl {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--text-dim);
+      }
+      .openWrap {
+        text-align: center;
+        padding: 10px 0 0;
+      }
+      .openBtn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 44px;
+        background: #0a0f1fdd;
+        border: none;
+        border-top: 1px solid #9aa6c8;
+        border-bottom: 1px solid #9aa6c8;
+        color: var(--text);
+        font-family: 'Oswald', sans-serif;
+        font-weight: 300;
+        font-size: 1.05rem;
+        clip-path: polygon(0 0, 100% 0, 94% 100%, 6% 100%);
+        cursor: pointer;
+      }
+      .openBtn:hover {
+        color: var(--gold);
+      }
+      kbd {
+        border: 1px solid #9aa6c8;
+        border-radius: 5px;
+        padding: 0 6px;
+        font-size: 0.72rem;
+        background: #ffffff14;
+        font-family: inherit;
+      }
+      .stage {
+        position: relative;
+        height: clamp(240px, 44vh, 420px);
+        overflow: hidden;
+        touch-action: pan-y;
+        --cw: min(58vw, 400px);
+      }
+      @media (min-width: 700px) {
+        .stage {
+          --cw: min(40vw, 400px);
+        }
+      }
+      .track {
+        position: absolute;
+        inset: 0;
+      }
+      .const {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: var(--cw);
+        height: 100%;
+        margin-left: calc(var(--cw) / -2);
+        transition:
+          transform 0.55s cubic-bezier(0.22, 0.9, 0.3, 1),
+          opacity 0.55s;
+        cursor: pointer;
+      }
+      .const svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        overflow: visible;
+      }
+      .navBtn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 3;
+        background: #0b0f22aa;
+        border: 1px solid var(--dim);
+        color: var(--text);
+        width: 36px;
+        height: 54px;
+        font-size: 1.6rem;
+        cursor: pointer;
+      }
+      .navBtn.l {
+        left: 6px;
+      }
+      .navBtn.r {
+        right: 6px;
+      }
+      .names {
+        position: relative;
+        height: 88px;
+        overflow: hidden;
+        margin-top: 6px;
+        --nw: 150px;
+      }
+      .cname {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: var(--nw);
+        margin-left: calc(var(--nw) / -2);
+        text-align: center;
+        transition:
+          transform 0.55s cubic-bezier(0.22, 0.9, 0.3, 1),
+          opacity 0.55s,
+          color 0.3s;
+        color: #8f9bc2;
+        cursor: pointer;
+        white-space: nowrap;
+        font-family: 'Oswald', sans-serif;
+        font-weight: 300;
+      }
+      .cname .nm {
+        font-size: 1rem;
+        transition: font-size 0.4s;
+      }
+      .cname .lv {
+        font-size: 1.05rem;
+        font-weight: 400;
+        margin-left: 6px;
+        color: #dfe6f7;
+        transition: font-size 0.4s;
+      }
+      .cname.sel {
+        color: #fff;
+        z-index: 2;
+      }
+      .cname.sel .nm {
+        font-size: clamp(1.1rem, 3.4vw, 1.8rem);
+      }
+      .cname.sel .lv {
+        font-size: clamp(1.4rem, 4.4vw, 2.4rem);
+      }
+      .plate {
+        height: 9px;
+        width: 78%;
+        margin: 8px auto 0;
+        background: linear-gradient(#5a6486, #2a3152);
+        clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);
+        opacity: 0.8;
+      }
+      .cname.sel .plate {
+        width: 96%;
+        background: linear-gradient(#cfd8f0, #6a7398);
+        opacity: 1;
+      }
+      .descWrap {
+        text-align: center;
+        padding: 10px 18px calc(28px + env(safe-area-inset-bottom, 0px));
+      }
+      .gname {
+        color: var(--gold);
+        letter-spacing: 0.16em;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        font-family: 'Oswald', sans-serif;
+      }
+      .desc {
+        max-width: 620px;
+        margin: 6px auto 0;
+        font-size: 1.05rem;
+        line-height: 1.5;
+        color: #e8ecf6;
+      }
+      .subRow {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 14px;
+        background: #ffffff08;
+        border: 1px solid #ffffff14;
+        border-radius: 8px;
+        color: var(--text);
+        font-family: 'Oswald', sans-serif;
+        font-size: 1.05rem;
+        cursor: pointer;
+      }
+      .subRow b {
+        color: var(--gold);
+      }
+      .subRow:hover {
+        border-color: var(--gold);
+      }
+      .backBtn {
+        background: none;
+        border: none;
+        color: var(--text-dim);
+        cursor: pointer;
+        font-size: 0.85rem;
+        padding: 0;
+        margin-bottom: 8px;
+      }
+      .plate {
+        height: 10px;
+        background: #0d1330;
+        box-shadow: inset 0 0 0 1px #3a4266;
+        overflow: hidden;
+        opacity: 0.95;
+      }
+      .plate i {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, #7fe3ff, #ffb347);
+        transition: width 0.6s;
+      }
+      .cname.sel .plate {
+        background: #0d1330;
+        box-shadow: inset 0 0 0 1px #9aa6c8;
+        opacity: 1;
+      }
+
+      #bg {
+        position: fixed;
+        inset: -14%;
+        z-index: -1;
+        pointer-events: none;
+        background:
+          radial-gradient(ellipse at 18% 32%, #1f7a82aa 0, transparent 46%),
+          radial-gradient(ellipse at 82% 72%, #b5602f88 0, transparent 42%),
+          radial-gradient(ellipse at 62% 18%, #4b2f8a88 0, transparent 46%);
+        transform: translate(var(--bx, 0px), var(--by, 0px)) scale(var(--bs, 1.08));
+        transition: transform 0.9s cubic-bezier(0.22, 0.9, 0.3, 1);
+      }
+      .track {
+        transition: opacity 0.35s;
+      }
+      .zoomLayer {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.45s;
+        z-index: 2;
+      }
+      .zoomLayer svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        overflow: visible;
+      }
+      .stage.zoomed {
+        height: clamp(300px, 54vh, 560px);
+        touch-action: none;
+      }
+      .stage.zoomed .zoomLayer {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .stage.zoomed .track {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .stage.zoomed .navBtn {
+        display: none;
+      }
+      body.zm .names {
+        display: none;
+      }
+      .zback {
+        display: none;
+        position: absolute;
+        left: 10px;
+        top: 8px;
+        z-index: 4;
+        align-items: center;
+        gap: 8px;
+        background: #0b0f22aa;
+        border: 1px solid var(--dim);
+        color: var(--text);
+        padding: 6px 12px;
+        font-family: 'Oswald', sans-serif;
+        font-weight: 300;
+        cursor: pointer;
+      }
+      .stage.zoomed .zback {
+        display: inline-flex;
+      }
+      .zs {
+        cursor: pointer;
+      }
+      .zs .core {
+        transform-box: fill-box;
+        transform-origin: center;
+        transition: transform 0.4s;
+      }
+      .zs.sel .core {
+        transform: scale(1.6);
+      }
+      .zs .halo {
+        transform-box: fill-box;
+        transform-origin: center;
+        transition:
+          transform 0.4s,
+          opacity 0.4s;
+        opacity: 0.15;
+      }
+      .zs.on .halo {
+        opacity: 0.3;
+      }
+      .zs.sel .halo {
+        transform: scale(1.7);
+        opacity: 0.4;
+      }
+      .zs text {
+        font-family: 'Oswald', sans-serif;
+        font-weight: 300;
+        font-size: 3.3px;
+        fill: #8f9bc2;
+        text-anchor: middle;
+        pointer-events: none;
+        transition:
+          font-size 0.4s,
+          fill 0.4s;
+      }
+      .zs.on text {
+        fill: #dfe6f7;
+      }
+      .zs.sel text {
+        font-size: 6px;
+        fill: #fff;
+      }
+      .zinfo {
+        display: none;
+        justify-content: center;
+        gap: 40px;
+        margin-top: 10px;
+        font-family: 'Oswald', sans-serif;
+        font-weight: 300;
+        font-size: 1rem;
+        color: #aab4d6;
+      }
+      .zinfo b {
+        font-weight: 400;
+        margin-left: 8px;
+        color: #fff;
+      }
+      body.zm .zinfo {
+        display: flex;
+      }
+
+      /* полоски: прежняя форма-трапеция, но с рамкой со всех сторон */
+      .plate,
+      .zbar {
+        --bw: 2px;
+        --sl: 12px;
+        --bc: #6a7398;
+        position: relative;
+        padding: var(--bw);
+        background: var(--bc);
+        clip-path: polygon(0 0, 100% 0, calc(100% - var(--sl)) 100%, var(--sl) 100%);
+        height: auto;
+        border: none;
+        box-shadow: none;
+        overflow: visible;
+        opacity: 0.9;
+      }
+      .plate {
+        width: 78%;
+        margin: 8px auto 0;
+      }
+      .cname.sel .plate {
+        width: 96%;
+        --sl: 14px;
+        --bc: #cfd8f0;
+        background: var(--bc);
+        opacity: 1;
+      }
+      .pin {
+        display: block;
+        background: #070b1c;
+        overflow: hidden;
+        clip-path: polygon(
+          1px 0,
+          calc(100% - 1px) 0,
+          calc(100% - (var(--sl) - var(--bw))) 100%,
+          calc(var(--sl) - var(--bw)) 100%
+        );
+      }
+      .plate i,
+      .zbar i {
+        display: block;
+        height: 7px;
+        width: 0;
+        background: linear-gradient(90deg, #7fe3ff, #ffb347);
+        transition: width 0.6s;
+      }
+      .zinfo {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+      .zhead {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        font-family: 'Oswald', sans-serif;
+        font-weight: 300;
+        font-size: clamp(1.2rem, 3.4vw, 1.9rem);
+        color: #fff;
+      }
+      .zhead b {
+        margin-left: 0;
+        font-weight: 400;
+        font-size: clamp(1.6rem, 4.6vw, 2.6rem);
+        display: inline-block;
+      }
+      .zbar {
+        width: min(86vw, 460px);
+        --bw: 3px;
+        --sl: 20px;
+        --bc: #cfd8f0;
+        opacity: 1;
+      }
+      .zbar i {
+        height: 9px;
+        transition: width 0.8s cubic-bezier(0.22, 0.9, 0.3, 1);
+      }
+      .zmeta {
+        display: flex;
+        gap: 36px;
+        font-family: 'Oswald', sans-serif;
+        font-weight: 300;
+        font-size: 1rem;
+        color: #aab4d6;
+      }
+      .zmeta em {
+        font-style: normal;
+      }
+      .zmeta b {
+        font-weight: 400;
+        margin-left: 8px;
+        color: #fff;
+        display: inline-block;
+      }
+      .up {
+        animation: pop 0.8s;
+      }
+      @keyframes pop {
+        0% {
+          transform: scale(1);
+        }
+        35% {
+          transform: scale(1.4);
+          color: #ffb347;
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .mute {
+        background: none;
+        border: 1px solid var(--dim);
+        color: var(--text-dim);
+        padding: 4px 12px;
+        cursor: pointer;
+        font-family: 'Oswald', sans-serif;
+        font-weight: 300;
+        font-size: 0.85rem;
+      }
+      .mute:hover {
+        color: var(--gold);
+        border-color: var(--gold);
+      }
+      .descWrap {
+        padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+      }
+
+      /* ===== Плеер: карточка из матового стекла, как в референсе ===== */
+      body {
+        padding-bottom: 64px;
+      }
+      .player {
+        position: fixed;
+        right: 16px;
+        bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+        transform: translateX(26px) scale(0.95);
+        transform-origin: bottom right;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition:
+          transform 0.32s cubic-bezier(0.22, 0.9, 0.3, 1),
+          opacity 0.25s,
+          visibility 0s linear 0.32s;
+        width: min(92vw, 320px);
+        z-index: 10;
+        padding: 12px 16px 8px;
+        border-radius: 22px;
+        color: #fff;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06));
+        -webkit-backdrop-filter: blur(24px) saturate(1.6);
+        backdrop-filter: blur(24px) saturate(1.6);
+        border: 1.5px solid rgba(255, 255, 255, 0.42);
+        box-shadow:
+          0 16px 44px rgba(0, 0, 0, 0.42),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      }
+      .player.open {
+        transform: none;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transition:
+          transform 0.32s cubic-bezier(0.22, 0.9, 0.3, 1),
+          opacity 0.25s,
+          visibility 0s;
+      }
+      .ptog {
+        position: fixed;
+        right: 16px;
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        z-index: 11;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        color: #fff;
+        cursor: pointer;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.07));
+        -webkit-backdrop-filter: blur(18px) saturate(1.6);
+        backdrop-filter: blur(18px) saturate(1.6);
+        border: 1.5px solid rgba(255, 255, 255, 0.42);
+        box-shadow:
+          0 8px 24px rgba(0, 0, 0, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        transition:
+          transform 0.2s,
+          color 0.2s,
+          border-color 0.2s;
+      }
+      .ptog:hover {
+        transform: scale(1.07);
+      }
+      .ptog svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .ptog.open {
+        color: var(--gold);
+        border-color: var(--gold);
+      }
+      .ptog.playing::after {
+        content: '';
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #7fe3ff;
+        box-shadow: 0 0 8px #7fe3ff;
+        animation: ppulse 1.4s ease-in-out infinite;
+      }
+      @keyframes ppulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.35;
+          transform: scale(0.7);
+        }
+      }
+      .phead {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .pcover {
+        flex: none;
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(145deg, #9fd0ff, #4b6cd6);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.55),
+          0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+      .pcover svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: #fff;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .pinfo {
+        flex: 1;
+        min-width: 0;
+      }
+      .ptitle {
+        font-weight: 500;
+        font-size: 1rem;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .psub {
+        font-size: 0.82rem;
+        opacity: 0.68;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .pdots {
+        flex: none;
+        width: 28px;
+        height: 28px;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.3rem;
+        line-height: 1;
+        cursor: pointer;
+        opacity: 0.9;
+      }
+      .ptimes {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        font-size: 0.72rem;
+        opacity: 0.85;
+      }
+      .pbar {
+        position: relative;
+        height: 14px;
+        cursor: pointer;
+        touch-action: none;
+      }
+      .pbar::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 5px;
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.35);
+      }
+      .pbar i {
+        position: absolute;
+        left: 0;
+        top: 5px;
+        height: 4px;
+        width: 0;
+        border-radius: 2px;
+        background: #fff;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+      }
+      .pctl {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 6px;
+      }
+      .pc {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        background: none;
+        border: none;
+        color: #fff;
+        opacity: 0.88;
+        cursor: pointer;
+        padding: 0;
+        transition:
+          opacity 0.2s,
+          color 0.2s,
+          transform 0.15s;
+      }
+      .pc:hover {
+        opacity: 1;
+      }
+      .pc:active {
+        transform: scale(0.92);
+      }
+      .pc svg {
+        width: 21px;
+        height: 21px;
+        fill: currentColor;
+      }
+      .pc.play svg {
+        width: 34px;
+        height: 34px;
+      }
+      .pc.fav svg {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+      }
+      .pc.fav.on {
+        color: #ff6b8b;
+        opacity: 1;
+      }
+      .pc.fav.on svg {
+        fill: currentColor;
+      }
+      .ic-pause {
+        display: none;
+      }
+      .player.playing .ic-pause {
+        display: block;
+      }
+      .player.playing .ic-play {
+        display: none;
+      }
+      .mpop,
+      .vpop,
+      .plist {
+        background: rgba(24, 34, 70, 0.55);
+        -webkit-backdrop-filter: blur(22px) saturate(1.6);
+        backdrop-filter: blur(22px) saturate(1.6);
+        border: 1.5px solid rgba(255, 255, 255, 0.35);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+        border-radius: 16px;
+      }
+      .mpop {
+        position: absolute;
+        right: 18px;
+        top: 52px;
+        display: none;
+        padding: 6px;
+        min-width: 180px;
+        z-index: 2;
+      }
+      .vpop {
+        position: absolute;
+        right: 14px;
+        bottom: 52px;
+        display: none;
+        padding: 12px 16px;
+      }
+      .mpop.open,
+      .vpop.open {
+        display: block;
+      }
+      .mi {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1rem;
+        padding: 9px 12px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+      .mi:hover {
+        background: rgba(255, 255, 255, 0.12);
+      }
+      .pvol {
+        width: 110px;
+        accent-color: #fff;
+        cursor: pointer;
+        vertical-align: middle;
+      }
+      .plist {
+        position: fixed;
+        right: 16px;
+        bottom: 230px;
+        width: min(92vw, 320px);
+        max-height: 38vh;
+        overflow-y: auto;
+        z-index: 10;
+        display: none;
+        color: #fff;
+      }
+      .plist.open {
+        display: block;
+      }
+      .pitem {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .pitem:hover {
+        background: rgba(255, 255, 255, 0.09);
+      }
+      .pitem.cur {
+        color: var(--gold);
+      }
+      .pn {
+        flex: 1;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .pf {
+        color: #ff6b8b;
+      }
+      .pdel {
+        background: none;
+        border: none;
+        color: #b3bddb;
+        font-size: 1.2rem;
+        cursor: pointer;
+      }
+      .pdel:hover {
+        color: var(--danger);
+      }
+      .pempty,
+      .pnote {
+        padding: 14px 16px;
+        color: #c3cbe6;
+        font-size: 0.95rem;
+        line-height: 1.4;
+      }
+      .pnote:empty {
+        display: none;
+      }
+
+      /* ===== Галерея работ и просмотрщик ===== */
+      .gal {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+      .gi {
+        position: relative;
+        aspect-ratio: 1;
+        overflow: hidden;
+        cursor: pointer;
+        border-radius: 10px;
+        background: #0b1024;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        transition:
+          transform 0.2s,
+          border-color 0.2s;
+      }
+      .gi:hover,
+      .gi:focus-visible {
+        transform: translateY(-2px);
+        border-color: var(--gold);
+        outline: none;
+      }
+      .gi img,
+      .gi video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .gtx {
+        height: 100%;
+        padding: 10px 10px 26px;
+        overflow: hidden;
+        font-size: 0.74rem;
+        line-height: 1.35;
+        color: #cfd6ee;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .gtx.big {
+        font-size: 0.9rem;
+        color: #fff;
+      }
+      .gfile {
+        height: 100%;
+        display: grid;
+        place-items: center;
+        color: #8f9bc2;
+        font-size: 0.8rem;
+        letter-spacing: 0.12em;
+      }
+      .gbadge {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        padding: 2px 6px;
+        border-radius: 6px;
+        font-size: 0.62rem;
+        letter-spacing: 0.08em;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.55);
+      }
+      .gplay {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font-size: 1.6rem;
+        text-shadow: 0 2px 8px #000;
+        pointer-events: none;
+      }
+      .gcap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 18px 8px 6px;
+        font-size: 0.74rem;
+        color: #fff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+      }
+      .gcap:empty {
+        display: none;
+      }
+      .lb {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 56px 64px 84px;
+        background: rgba(3, 6, 18, 0.84);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+      }
+      .lb.open {
+        display: flex;
+      }
+      .lbbody {
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+        touch-action: pan-y;
+      }
+      .lbbody img,
+      .lbbody video {
+        max-width: 100%;
+        max-height: calc(100vh - 190px);
+        object-fit: contain;
+        border-radius: 10px;
+        box-shadow: 0 16px 50px rgba(0, 0, 0, 0.6);
+      }
+      .lbtext {
+        width: min(92vw, 760px);
+        max-height: calc(100vh - 190px);
+        overflow: auto;
+        padding: 20px 24px;
+        border-radius: 16px;
+        color: #fff;
+        font-size: 1.05rem;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+        background: rgba(24, 34, 70, 0.55);
+        border: 1.5px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 16px 50px rgba(0, 0, 0, 0.5);
+      }
+      .lbcap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+        text-align: center;
+        padding: 0 70px;
+      }
+      .lbt {
+        font-size: 1.1rem;
+        color: #fff;
+      }
+      .lbm {
+        margin-top: 2px;
+        font-size: 0.85rem;
+        color: #9aa6c8;
+      }
+      .lbx,
+      .lbn {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        cursor: pointer;
+        font-size: 1.6rem;
+        line-height: 1;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+      }
+      .lbx:hover,
+      .lbn:hover {
+        color: var(--gold);
+        border-color: var(--gold);
+      }
+      .lbx {
+        top: calc(14px + env(safe-area-inset-top, 0px));
+        right: 16px;
+      }
+      .lbn {
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .lbn.l {
+        left: 12px;
+      }
+      .lbn.r {
+        right: 12px;
+      }
+      @media (max-width: 640px) {
+        .lb {
+          padding: 56px 12px 96px;
+        }
+        .lbn {
+          top: auto;
+          bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+          transform: none;
+        }
+      }
+      .fhint {
+        margin-top: 4px;
+        font-size: 0.72rem;
+        color: #8f9bc2;
+      }
+      .lbtext a {
+        display: inline-block;
+        margin-top: 14px;
+        color: var(--gold);
+      }
+      /* ===== Режим «витрина» ===== */
+      .splash {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        padding: 24px;
+        text-align: center;
+        color: #fff;
+        background:
+          radial-gradient(ellipse at 20% 25%, rgba(31, 122, 130, 0.55), transparent 55%),
+          radial-gradient(ellipse at 80% 75%, rgba(181, 96, 47, 0.4), transparent 50%), rgba(4, 7, 18, 0.94);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        transition: opacity 0.6s;
+      }
+      body.splash .splash {
+        display: flex;
+      }
+      .splash.out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .stitle {
+        font-family: 'Oswald', sans-serif;
+        font-weight: 300;
+        font-size: clamp(2rem, 7vw, 3.6rem);
+        letter-spacing: 0.04em;
+      }
+      .ssub {
+        color: #aab4d6;
+        font-size: 1.15rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+      .sbtn {
+        margin-top: 18px;
+        padding: 12px 54px;
+        font-family: 'Oswald', sans-serif;
+        font-weight: 300;
+        font-size: 1.2rem;
+        color: #fff;
+        cursor: pointer;
+        border-radius: 14px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.06));
+        -webkit-backdrop-filter: blur(18px);
+        backdrop-filter: blur(18px);
+        border: 1.5px solid rgba(255, 255, 255, 0.45);
+        box-shadow:
+          0 10px 30px rgba(0, 0, 0, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      }
+      .sbtn:hover {
+        color: var(--gold);
+        border-color: var(--gold);
+      }
+      .snomusic {
+        background: none;
+        border: none;
+        color: #8f9bc2;
+        cursor: pointer;
+        font-size: 0.95rem;
+        text-decoration: underline;
+      }
+      .snote {
+        max-width: 360px;
+        color: #6f7aa0;
+        font-size: 0.82rem;
+      }
+      body.showcase #pFav,
+      body.showcase #pAdd,
+      body.showcase .pdel,
+      body.showcase #charName {
+        pointer-events: none;
+      }
+      body.showcase #pFav,
+      body.showcase #pAdd,
+      body.showcase .pdel {
+        display: none;
+      }
+      body.showcase.nomusic #pToggle,
+      body.showcase.nomusic #player,
+      body.showcase.nomusic #plist {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="splash" id="splash">
+      <div class="stitle" id="sTitle">Карта навыков</div>
+      <div class="ssub" id="sSub">Портфолио</div>
+      <button class="sbtn" id="sEnter" type="button">Войти</button>
+      <button class="snomusic" id="sQuiet" type="button">Войти без музыки</button>
+      <div class="snote">Со звуком: музыка начнёт играть после входа. Выключить её можно в плеере.</div>
+    </div>
+    <div id="bg"></div>
+    <div class="topbar">
+      <div class="id">
+        <span class="ornWrap"><span class="chev">❮❮</span><span class="hexOrn"></span></span>
+        <span class="lbl">имя</span><input id="charName" type="text" value="Странник" maxlength="24" />
+        <div class="levelchip">Уровень <b id="charLevel">0</b></div>
+        <span class="ornWrap"><span class="hexOrn"></span><span class="chev">❯❯</span></span>
+      </div>
+      <div class="hint" id="hintTxt"></div>
+      <button class="mute" id="muteBtn" type="button">Звук: вкл</button>
+    </div>
+
+    <div class="openWrap">
+      <button class="openBtn" id="openBtn" type="button">
+        <kbd>Space</kbd><span id="openLbl">Войти в ветку</span>
+      </button>
+    </div>
+    <div class="stage" id="stage">
+      <div class="zoomLayer" id="zoomLayer"></div>
+      <button class="zback" id="zback" type="button"><kbd>Esc</kbd><span>Назад</span></button>
+      <button class="navBtn l" id="prevBtn" type="button" aria-label="Назад">‹</button>
+      <div class="track" id="track"></div>
+      <button class="navBtn r" id="nextBtn" type="button" aria-label="Вперёд">›</button>
+    </div>
+    <div class="names" id="names"></div>
+    <div class="descWrap">
+      <div class="gname" id="gname"></div>
+      <div class="desc" id="desc"></div>
+      <div class="zinfo" id="zinfo">
+        <div class="zhead"><span id="zhName"></span><b id="zhLvl">0</b></div>
+        <div class="zbar">
+          <span class="pin"><i id="zbarFill"></i></span>
+        </div>
+        <div class="zmeta">
+          <span><em id="zmA"></em><b id="zmAv">0</b></span>
+          <span><em id="zmB"></em><b id="zmBv">0</b></span>
+        </div>
+      </div>
+    </div>
+
+    <button class="ptog" id="pToggle" type="button" title="Плеер">
+      <svg viewBox="0 0 24 24">
+        <path d="M9 18V6l11-2v12" />
+        <circle cx="6.5" cy="18" r="2.5" />
+        <circle cx="17.5" cy="16" r="2.5" />
+      </svg>
+    </button>
+    <div class="plist" id="plist">
+      <div id="plistBody"></div>
+      <div class="pnote" id="pnote"></div>
+    </div>
+    <div class="player" id="player">
+      <div class="phead">
+        <div class="pcover">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 18V6l11-2v12" />
+            <circle cx="6.5" cy="18" r="2.5" />
+            <circle cx="17.5" cy="16" r="2.5" />
+          </svg>
+        </div>
+        <div class="pinfo">
+          <div class="ptitle" id="ptitle">Музыка не добавлена</div>
+          <div class="psub" id="psub"></div>
+        </div>
+        <button class="pdots" id="pMenu" type="button" title="Меню">⋯</button>
+      </div>
+      <div class="mpop" id="pMenuPop">
+        <button class="mi" id="pAdd" type="button">Добавить файлы</button>
+        <button class="mi" id="pList" type="button">Список треков</button>
+      </div>
+      <div class="ptimes"><span id="pCur">0:00</span><span id="pDur">0:00</span></div>
+      <div class="pbar" id="pbar"><i id="pfill"></i></div>
+      <div class="pctl">
+        <button class="pc fav" id="pFav" type="button" title="В избранное">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+            />
+          </svg>
+        </button>
+        <button class="pc" id="pPrev" type="button" title="Назад (B)">
+          <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z" /></svg>
+        </button>
+        <button class="pc play" id="pPlay" type="button" title="Играть / пауза (P)">
+          <svg class="ic-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+          <svg class="ic-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z" /></svg>
+        </button>
+        <button class="pc" id="pNext" type="button" title="Дальше (N)">
+          <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z" /></svg>
+        </button>
+        <button class="pc" id="pVolBtn" type="button" title="Громкость">
+          <svg viewBox="0 0 24 24">
+            <path
+              id="pVolIcon"
+              d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="vpop" id="pVolPop">
+        <input class="pvol" id="pvol" type="range" min="0" max="100" value="60" title="Громкость" />
+      </div>
+      <input type="file" id="musicFile" accept="audio/*,.mp3,.m4a,.aac,.ogg,.oga,.opus,.wav,.flac" multiple hidden />
+    </div>
+
+    <div class="overlay" id="overlay">
+      <div class="panel" id="panelBody"></div>
+    </div>
+    <div class="lb" id="lb">
+      <button class="lbx" id="lbClose" type="button" aria-label="Закрыть">×</button>
+      <button class="lbn l" id="lbPrev" type="button" aria-label="Назад">‹</button>
+      <button class="lbn r" id="lbNext" type="button" aria-label="Вперёд">›</button>
+      <div class="lbbody" id="lbBody"></div>
+      <div class="lbcap">
+        <div class="lbt" id="lbT"></div>
+        <div class="lbm" id="lbM"></div>
+      </div>
+    </div>
+
+    <script>
+      const BRANCHES = {
+        blender: {
+          name: 'Blender',
+          type: 'multi',
+          x: 230,
+          y: 260,
+          subs: [
+            { id: 'lowpoly', name: 'Low-poly', x: 120, y: 150 },
+            { id: 'midpoly', name: 'Mid-poly', x: 230, y: 110 },
+            { id: 'highpoly', name: 'High-poly', x: 330, y: 150 },
+            { id: 'anim', name: 'Анимация', x: 340, y: 280 },
+            { id: 'sculpt', name: 'Скульптинг', x: 230, y: 330 },
+            { id: 'anatomy', name: 'Анатомия', x: 120, y: 280 },
+          ],
+        },
+        writing: {
+          name: 'Писательство',
+          type: 'count',
+          milestones: [10, 30, 50, 100, 200, 300],
+          stars: [
+            { x: 560, y: 150 },
+            { x: 630, y: 190 },
+            { x: 700, y: 150 },
+            { x: 770, y: 190 },
+          ],
+        },
+        english: {
+          name: 'Английский',
+          type: 'tier',
+          tiers: ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
+          stars: [
+            { x: 560, y: 340 },
+            { x: 610, y: 380 },
+            { x: 660, y: 410 },
+            { x: 710, y: 380 },
+            { x: 760, y: 340 },
+            { x: 810, y: 370 },
+          ],
+        },
+        ai: { name: 'ИИ-грамотность', type: 'stub', x: 900, y: 120 },
+        marketing: { name: 'Маркетинг', type: 'stub', x: 900, y: 220 },
+        comm: { name: 'Коммуникация', type: 'stub', x: 900, y: 320 },
+        uxvisual: { name: 'Visual/UX', type: 'stub', x: 900, y: 420 },
+      };
+
+      const FLAVORS = {
+        'blender|lowpoly': 'Базовые формы малой детализации — фундамент любой сцены.',
+        'blender|midpoly': 'Больше полигонов, больше деталей — баланс чистоты и сложности.',
+        'blender|highpoly': 'Максимальная детализация для крупных планов и текстур.',
+        'blender|anim': 'Оживление моделей — вес, тайминг, характер движения.',
+        'blender|sculpt': 'Ручная лепка форм — органика и мелкий рельеф.',
+        'blender|anatomy': 'Понимание пропорций и строения — основа персонажей.',
+        writing: 'Путь рассказчика — каждая опубликованная глава двигает историю дальше.',
+        english: 'Путь владения языком — от первых фраз до свободной речи.',
+        'english|A1': 'Простые фразы и базовые бытовые конструкции.',
+        'english|A2': 'Понимание коротких текстов на знакомые темы.',
+        'english|B1': 'Уверенное общение в привычных ситуациях.',
+        'english|B2': 'Свободное обсуждение сложных тем.',
+        'english|C1': 'Гибкая, спонтанная речь почти без усилий.',
+        'english|C2': 'Владение на уровне носителя языка.',
+        ai: 'Эта ветка ещё не раскрыта.',
+        marketing: 'Эта ветка ещё не раскрыта.',
+        comm: 'Эта ветка ещё не раскрыта.',
+        uxvisual: 'Эта ветка ещё не раскрыта.',
+      };
+      function labelFor(branch, sub) {
+        const b = BRANCHES[branch];
+        if (b.type === 'multi') return b.name + ' · ' + b.subs.find((s) => s.id === sub).name;
+        if (b.type === 'tier') return sub ? b.name + ' · ' + sub : b.name;
+        return b.name;
+      }
+      function updateReadout(key) {
+        const [branch, sub] = key.split('|');
+        const b = BRANCHES[branch];
+        let lvl;
+        if (b.type === 'multi') lvl = entriesFor(branch, sub).length;
+        else if (b.type === 'tier') lvl = sub ? BRANCHES.english.tiers.indexOf(sub) + 1 : branchLevel(branch);
+        else lvl = branchLevel(branch);
+        document.getElementById('rname').innerHTML =
+          labelFor(branch, sub) + (b.type !== 'stub' ? ` <b>${lvl}</b>` : '');
+        document.getElementById('rdesc').textContent = FLAVORS[key] || FLAVORS[branch] || '';
+      }
+      function resetReadout() {
+        document.getElementById('rname').innerHTML = 'Персонаж <b>' + charLevel() + '</b>';
+        document.getElementById('rdesc').textContent = 'Наведи или нажми на звезду, чтобы узнать о ветке подробнее.';
+      }
+      let ENTRIES = [];
+      let SHOWCASE = false,
+        SITE = null;
+      let db;
+      function openDB() {
+        return new Promise((res, rej) => {
+          try {
+            const r = indexedDB.open('skilltree_db', 2);
+            r.onupgradeneeded = (e) => {
+              const d = e.target.result;
+              if (!d.objectStoreNames.contains('entries'))
+                d.createObjectStore('entries', { keyPath: 'id', autoIncrement: true });
+              if (!d.objectStoreNames.contains('tracks'))
+                d.createObjectStore('tracks', { keyPath: 'id', autoIncrement: true });
+            };
+            r.onsuccess = (e) => res(e.target.result);
+            r.onerror = () => rej();
+          } catch (e) {
+            rej(e);
+          }
+        });
+      }
+      function loadEntries() {
+        return new Promise((res) => {
+          try {
+            const tx = db.transaction('entries', 'readonly');
+            const st = tx.objectStore('entries');
+            const rq = st.getAll();
+            rq.onsuccess = () => res(rq.result || []);
+            rq.onerror = () => res([]);
+          } catch (e) {
+            res([]);
+          }
+        });
+      }
+      function saveEntry(rec) {
+        return new Promise((res) => {
+          try {
+            const tx = db.transaction('entries', 'readwrite');
+            tx.objectStore('entries').add(rec);
+            tx.oncomplete = () => res(true);
+            tx.onerror = () => res(false);
+          } catch (e) {
+            res(false);
+          }
+        });
+      }
+
+      function entriesFor(branch, sub) {
+        return ENTRIES.filter((e) => e.branch === branch && (!sub || e.sub === sub));
+      }
+
+      function branchLevel(key) {
+        const b = BRANCHES[key];
+        if (b.type === 'multi') return b.subs.reduce((s, sub) => s + entriesFor(key, sub.id).length, 0);
+        if (b.type === 'count') return entriesFor(key).length;
+        if (b.type === 'tier') {
+          let lvl = 0;
+          b.tiers.forEach((t, i) => {
+            if (entriesFor(key, t).length > 0) lvl = i + 1;
+          });
+          return lvl;
+        }
+        return 0;
+      }
+      function charLevel() {
+        return Object.keys(BRANCHES).reduce((s, k) => s + branchLevel(k), 0);
+      }
+
+      /* ===== Звук: синтез через Web Audio, без файлов ===== */
+      const SND = (() => {
+        let ctx = null,
+          master = null,
+          send = null,
+          noise = null,
+          muted = false;
+        try {
+          muted = localStorage.getItem('skilltree_mute') === '1';
+        } catch (e) {}
+        function ready() {
+          if (muted) return false;
+          try {
+            if (!ctx) {
+              const AC = window.AudioContext || window.webkitAudioContext;
+              if (!AC) return false;
+              ctx = new AC();
+              master = ctx.createGain();
+              master.gain.value = 0.55;
+              master.connect(ctx.destination);
+              send = ctx.createGain();
+              const dl = ctx.createDelay(1),
+                fb = ctx.createGain(),
+                lp = ctx.createBiquadFilter();
+              dl.delayTime.value = 0.14;
+              fb.gain.value = 0.34;
+              lp.type = 'lowpass';
+              lp.frequency.value = 3000;
+              send.connect(dl);
+              dl.connect(lp);
+              lp.connect(fb);
+              fb.connect(dl);
+              lp.connect(master);
+              noise = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+              const d = noise.getChannelData(0);
+              for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+            }
+            if (ctx.state === 'suspended') ctx.resume();
+            return true;
+          } catch (e) {
+            return false;
+          }
+        }
+        function env(g, t, a, dur, vol) {
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.linearRampToValueAtTime(vol, t + a);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        }
+        function tone(f, t, dur, vol, type, f2) {
+          const o = ctx.createOscillator(),
+            g = ctx.createGain();
+          o.type = type || 'sine';
+          o.frequency.setValueAtTime(f, t);
+          if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+          env(g, t, 0.01, dur, vol);
+          o.connect(g);
+          g.connect(master);
+          g.connect(send);
+          o.start(t);
+          o.stop(t + dur + 0.05);
+        }
+        function sweep(t, dur, f1, f2, vol) {
+          const src = ctx.createBufferSource(),
+            b = ctx.createBiquadFilter(),
+            g = ctx.createGain();
+          src.buffer = noise;
+          b.type = 'bandpass';
+          b.Q.value = 1.4;
+          b.frequency.setValueAtTime(f1, t);
+          b.frequency.exponentialRampToValueAtTime(f2, t + dur);
+          env(g, t, dur * 0.35, dur, vol);
+          src.connect(b);
+          b.connect(g);
+          g.connect(master);
+          g.connect(send);
+          src.start(t);
+          src.stop(t + dur + 0.05);
+        }
+        const SOUNDS = {
+          tick() {
+            // щелчок: короткий сухой всплеск шума + маленький низкий «тук», без эха
+            const t = ctx.currentTime;
+            const src = ctx.createBufferSource(),
+              f = ctx.createBiquadFilter(),
+              g = ctx.createGain();
+            src.buffer = noise;
+            f.type = 'bandpass';
+            f.frequency.value = 3200;
+            f.Q.value = 0.9;
+            g.gain.setValueAtTime(0.0001, t);
+            g.gain.linearRampToValueAtTime(0.55, t + 0.002);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + 0.035);
+            src.connect(f);
+            f.connect(g);
+            g.connect(master);
+            src.start(t, Math.random() * 0.5);
+            src.stop(t + 0.05);
+            const o = ctx.createOscillator(),
+              og = ctx.createGain();
+            o.type = 'sine';
+            o.frequency.setValueAtTime(240, t);
+            o.frequency.exponentialRampToValueAtTime(100, t + 0.04);
+            og.gain.setValueAtTime(0.0001, t);
+            og.gain.linearRampToValueAtTime(0.28, t + 0.002);
+            og.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+            o.connect(og);
+            og.connect(master);
+            o.start(t);
+            o.stop(t + 0.06);
+          },
+          wind() {
+            // ветер: только мягкий шум, без тонов и без эха; один и тот же звук для входа и выхода
+            const t = ctx.currentTime,
+              dur = 0.8;
+            const src = ctx.createBufferSource(),
+              bp = ctx.createBiquadFilter(),
+              lp = ctx.createBiquadFilter(),
+              g = ctx.createGain();
+            src.buffer = noise;
+            bp.type = 'bandpass';
+            bp.Q.value = 0.7;
+            bp.frequency.setValueAtTime(500, t);
+            bp.frequency.linearRampToValueAtTime(1100, t + dur * 0.5);
+            bp.frequency.linearRampToValueAtTime(700, t + dur);
+            lp.type = 'lowpass';
+            lp.frequency.value = 2200;
+            g.gain.setValueAtTime(0.0001, t);
+            g.gain.linearRampToValueAtTime(0.32, t + 0.28);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            src.connect(bp);
+            bp.connect(lp);
+            lp.connect(g);
+            g.connect(master);
+            src.start(t, Math.random() * 0.15);
+            src.stop(t + dur + 0.05);
+          },
+          level() {
+            const t = ctx.currentTime;
+            [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+              tone(f, t + i * 0.09, 1.2, 0.09, 'triangle');
+              tone(f * 2, t + i * 0.09, 0.8, 0.03);
+            });
+            sweep(t, 0.6, 1500, 5200, 0.07);
+          },
+        };
+        return {
+          play(n) {
+            if (!ready()) return;
+            try {
+              SOUNDS[n]();
+            } catch (e) {}
+          },
+          toggle() {
+            muted = !muted;
+            try {
+              localStorage.setItem('skilltree_mute', muted ? '1' : '0');
+            } catch (e) {}
+            if (!muted) this.play('tick');
+          },
+          get muted() {
+            return muted;
+          },
+        };
+      })();
+      function syncMute() {
+        document.getElementById('muteBtn').textContent = 'Звук: ' + (SND.muted ? 'выкл' : 'вкл');
+      }
+      document.getElementById('muteBtn').onclick = () => {
+        SND.toggle();
+        syncMute();
+      };
+      syncMute();
+      /* ===== Музыкальный плеер: свои файлы, хранятся в браузере ===== */
+      const MUS = (() => {
+        const A = new Audio();
+        A.preload = 'metadata';
+        let tracks = [],
+          cur = -1,
+          loaded = false,
+          url = null,
+          dragging = false;
+        const $ = (id) => document.getElementById(id);
+        const esc = (t) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+        const clean = (n) =>
+          n
+            .replace(/\.[^.]+$/, '')
+            .replace(/_+/g, ' ')
+            .trim();
+        const fmt = (t) => {
+          if (!isFinite(t)) return '0:00';
+          return Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
+        };
+        const run = (fn) => {
+          try {
+            const r = fn();
+            if (r && r.catch) r.catch(() => {});
+          } catch (e) {}
+        };
+        function tx(mode, fn) {
+          return new Promise((res) => {
+            try {
+              const t = db.transaction('tracks', mode),
+                r = fn(t.objectStore('tracks'));
+              t.oncomplete = () => res(r ? r.result : null);
+              t.onerror = t.onabort = () => res(null);
+            } catch (e) {
+              res(null);
+            }
+          });
+        }
+        function note(msg) {
+          $('pnote').textContent = msg || '';
+        }
+        function fixListPos() {
+          const r = $('player').getBoundingClientRect();
+          $('plist').style.bottom = Math.round(innerHeight - r.top + 8) + 'px';
+        }
+        function drawList() {
+          $('plistBody').innerHTML = tracks.length
+            ? tracks
+                .map(
+                  (t, i) =>
+                    `<div class="pitem ${i === cur ? 'cur' : ''}" data-i="${i}"><span class="pn">${esc(t.name)}</span>${t.fav ? '<span class="pf">♥</span>' : ''}<button class="pdel" data-del="${i}" title="Удалить" type="button">×</button></div>`,
+                )
+                .join('')
+            : '<div class="pempty">Здесь пока пусто. Нажми «+» и выбери свои файлы (mp3, m4a, ogg, wav) — они сохранятся в браузере.</div>';
+        }
+        const VOL_ON =
+            'M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z',
+          VOL_OFF =
+            'M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z';
+        function volIcon() {
+          $('pVolIcon').setAttribute('d', +$('pvol').value === 0 ? VOL_OFF : VOL_ON);
+        }
+        function ui() {
+          $('player').classList.toggle('playing', !A.paused);
+          $('pToggle').classList.toggle('playing', !A.paused);
+          $('ptitle').textContent = cur >= 0 ? tracks[cur].name : tracks.length ? 'Выбери трек' : 'Музыка не добавлена';
+          $('psub').textContent = tracks.length
+            ? 'Трек ' + (cur >= 0 ? cur + 1 : '–') + ' из ' + tracks.length
+            : 'Нажми ⋯ → «Добавить файлы»';
+          $('pFav').classList.toggle('on', !!(tracks[cur] && tracks[cur].fav));
+          volIcon();
+          drawList();
+        }
+        async function toggleFav() {
+          const t = tracks[cur];
+          if (!t) return;
+          t.fav = !t.fav;
+          await tx('readwrite', (st) => st.put(t));
+          ui();
+        }
+        function closePops() {
+          const was = $('pMenuPop').classList.contains('open') || $('pVolPop').classList.contains('open');
+          $('pMenuPop').classList.remove('open');
+          $('pVolPop').classList.remove('open');
+          return was;
+        }
+        async function migrateOld() {
+          try {
+            if (localStorage.getItem('skilltree_music_migrated')) return;
+          } catch (e) {}
+          const old = await new Promise((res) => {
+            try {
+              const r = indexedDB.open('skilltree_music');
+              r.onupgradeneeded = (e) => e.target.transaction.abort();
+              r.onsuccess = (e) => {
+                const d = e.target.result;
+                try {
+                  const rq = d.transaction('tracks').objectStore('tracks').getAll();
+                  rq.onsuccess = () => {
+                    d.close();
+                    res(rq.result || []);
+                  };
+                  rq.onerror = () => {
+                    d.close();
+                    res([]);
+                  };
+                } catch (err) {
+                  d.close();
+                  res([]);
+                }
+              };
+              r.onerror = r.onblocked = () => res([]);
+            } catch (e) {
+              res([]);
+            }
+          });
+          for (const t of old)
+            if (t && t.blob)
+              await tx('readwrite', (st) => st.add({ name: t.name, blob: t.blob, size: t.blob.size, fav: !!t.fav }));
+          try {
+            localStorage.setItem('skilltree_music_migrated', '1');
+          } catch (e) {}
+        }
+        function progress() {
+          const d = A.duration,
+            t = A.currentTime;
+          $('pfill').style.width = (isFinite(d) && d > 0 ? (t / d) * 100 : 0) + '%';
+          $('pCur').textContent = fmt(t);
+          $('pDur').textContent = fmt(d);
+        }
+        function load(i) {
+          if (url) {
+            try {
+              URL.revokeObjectURL(url);
+            } catch (e) {}
+          }
+          cur = i;
+          url = null;
+          if (tracks[i].url) A.src = tracks[i].url;
+          else {
+            url = URL.createObjectURL(tracks[i].blob);
+            A.src = url;
+          }
+          loaded = true;
+          try {
+            localStorage.setItem('skilltree_track', String(tracks[i].id));
+          } catch (e) {}
+          try {
+            if ('mediaSession' in navigator)
+              navigator.mediaSession.metadata = new MediaMetadata({ title: tracks[i].name, artist: 'Карта навыков' });
+          } catch (e) {}
+        }
+        function playIndex(i) {
+          if (!tracks[i]) return;
+          load(i);
+          run(() => A.play());
+          ui();
+        }
+        function toggle() {
+          if (!tracks.length) return $('musicFile').click();
+          if (cur < 0) return playIndex(0);
+          if (!loaded) load(cur);
+          if (A.paused) run(() => A.play());
+          else A.pause();
+        }
+        function next() {
+          if (tracks.length) playIndex((cur + 1) % tracks.length);
+        }
+        function prev() {
+          if (!tracks.length) return;
+          if (A.currentTime > 3) A.currentTime = 0;
+          else playIndex((cur - 1 + tracks.length) % tracks.length);
+        }
+        async function remove(i) {
+          const t = tracks[i];
+          if (!t) return;
+          await tx('readwrite', (st) => st.delete(t.id));
+          const wasCur = i === cur,
+            wasPlaying = !A.paused;
+          tracks.splice(i, 1);
+          if (wasCur) {
+            A.pause();
+            A.removeAttribute('src');
+            loaded = false;
+            progress();
+            cur = tracks.length ? Math.min(i, tracks.length - 1) : -1;
+            if (wasPlaying && cur >= 0) playIndex(cur);
+          } else if (i < cur) cur--;
+          ui();
+        }
+        async function addFiles(list) {
+          let failed = 0;
+          for (const f of list) {
+            if (!/^audio\//.test(f.type) && !/\.(mp3|m4a|aac|ogg|oga|opus|wav|flac)$/i.test(f.name)) continue;
+            const rec = { name: clean(f.name), blob: f, size: f.size };
+            const id = await tx('readwrite', (st) => st.add(rec));
+            if (id == null) {
+              failed++;
+              continue;
+            }
+            rec.id = id;
+            tracks.push(rec);
+          }
+          if (cur < 0 && tracks.length) cur = 0;
+          note(failed ? 'Не все файлы удалось сохранить: в браузере не хватило места.' : '');
+          ui();
+          if (tracks.length) {
+            fixListPos();
+            $('plist').classList.add('open');
+          }
+        }
+        function seekFrom(e) {
+          const r = $('pbar').getBoundingClientRect(),
+            k = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+          if (isFinite(A.duration)) A.currentTime = k * A.duration;
+          progress();
+        }
+        A.addEventListener('play', ui);
+        A.addEventListener('pause', ui);
+        A.addEventListener('timeupdate', progress);
+        A.addEventListener('loadedmetadata', progress);
+        A.addEventListener('ended', next);
+        A.addEventListener('error', () => {
+          if (A.getAttribute('src')) $('ptitle').textContent = '⚠ Не удалось воспроизвести этот файл';
+        });
+        const btn = (id, fn) =>
+          ($(id).onclick = (e) => {
+            fn();
+            e.currentTarget.blur();
+          });
+        btn('pPlay', toggle);
+        btn('pNext', next);
+        btn('pPrev', prev);
+        btn('pAdd', () => {
+          closePops();
+          $('musicFile').click();
+        });
+        btn('pList', () => {
+          closePops();
+          fixListPos();
+          $('plist').classList.toggle('open');
+        });
+        function setOpen(o) {
+          $('player').classList.toggle('open', o);
+          $('pToggle').classList.toggle('open', o);
+          if (!o) {
+            closePops();
+            $('plist').classList.remove('open');
+          }
+          try {
+            localStorage.setItem('skilltree_player_open', o ? '1' : '0');
+          } catch (e) {}
+        }
+        btn('pToggle', () => setOpen(!$('player').classList.contains('open')));
+        try {
+          if (localStorage.getItem('skilltree_player_open') === '1') setOpen(true);
+        } catch (e) {}
+        btn('pFav', toggleFav);
+        btn('pMenu', () => {
+          const o = !$('pMenuPop').classList.contains('open');
+          closePops();
+          $('pMenuPop').classList.toggle('open', o);
+        });
+        btn('pVolBtn', () => {
+          const o = !$('pVolPop').classList.contains('open');
+          closePops();
+          $('pVolPop').classList.toggle('open', o);
+        });
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('#pMenu,#pMenuPop,#pVolBtn,#pVolPop')) closePops();
+        });
+        $('musicFile').addEventListener('change', (e) => {
+          const files = [...e.target.files];
+          e.target.value = '';
+          addFiles(files);
+        });
+        $('plist').addEventListener('click', (e) => {
+          const d = e.target.closest('[data-del]');
+          if (d) return remove(+d.dataset.del);
+          const it = e.target.closest('.pitem');
+          if (it) playIndex(+it.dataset.i);
+        });
+        const bar = $('pbar');
+        bar.addEventListener('pointerdown', (e) => {
+          dragging = true;
+          try {
+            bar.setPointerCapture(e.pointerId);
+          } catch (err) {}
+          seekFrom(e);
+        });
+        bar.addEventListener('pointermove', (e) => {
+          if (dragging) seekFrom(e);
+        });
+        bar.addEventListener('pointerup', () => {
+          dragging = false;
+        });
+        const vol = $('pvol');
+        try {
+          const v = localStorage.getItem('skilltree_vol');
+          if (v !== null) vol.value = v;
+        } catch (e) {}
+        A.volume = vol.value / 100;
+        vol.addEventListener('input', () => {
+          A.volume = vol.value / 100;
+          volIcon();
+          try {
+            localStorage.setItem('skilltree_vol', vol.value);
+          } catch (e) {}
+        });
+        vol.addEventListener('change', () => vol.blur());
+        addEventListener('resize', () => {
+          if ($('plist').classList.contains('open')) fixListPos();
+        });
+        try {
+          if ('mediaSession' in navigator) {
+            const h = (n, f) => navigator.mediaSession.setActionHandler(n, f);
+            h('play', toggle);
+            h('pause', toggle);
+            h('nexttrack', next);
+            h('previoustrack', prev);
+          }
+        } catch (e) {}
+        return {
+          toggle,
+          next,
+          prev,
+          closeList() {
+            const was = $('plist').classList.contains('open') || closePops();
+            $('plist').classList.remove('open');
+            return was;
+          },
+          setRemote(list) {
+            tracks = list.map((t, k) => ({ id: k + 1, name: t.name, url: t.url }));
+            cur = tracks.length ? 0 : -1;
+            loaded = false;
+            ui();
+            progress();
+          },
+          startFromGesture() {
+            if (!tracks.length) return;
+            playIndex(cur >= 0 ? cur : 0);
+            if (!$('player').classList.contains('open')) $('pToggle').click();
+          },
+          async init() {
+            await migrateOld();
+            tracks = (await tx('readonly', (st) => st.getAll())) || [];
+            let last = null;
+            try {
+              last = +localStorage.getItem('skilltree_track');
+            } catch (e) {}
+            const i = tracks.findIndex((t) => t.id === last);
+            cur = i >= 0 ? i : tracks.length ? 0 : -1;
+            loaded = false;
+            ui();
+            progress();
+          },
+        };
+      })();
+
+      const ITEMS = [];
+      ITEMS.push({ key: 'blender', branch: 'blender', name: 'Blender', group: 'Основная ветка', n: 6 });
+      ITEMS.push({ key: 'writing', branch: 'writing', name: 'Писательство', group: 'Основная ветка', n: 6 });
+      ITEMS.push({ key: 'english', branch: 'english', name: 'Английский', group: 'Основная ветка', n: 6 });
+      ['ai', 'marketing', 'comm', 'uxvisual'].forEach((k) =>
+        ITEMS.push({ key: k, branch: k, name: BRANCHES[k].name, group: 'Скоро', n: 5, stub: true }),
+      );
+      let sel = 0,
+        lastWheel = 0,
+        swiped = false,
+        sx = null;
+      function itemLevel(it) {
+        if (it.stub) return 0;
+        return branchLevel(it.branch);
+      }
+      function litCount(it) {
+        const l = itemLevel(it);
+        if (it.branch === 'blender')
+          return BRANCHES.blender.subs.filter((x) => entriesFor('blender', x.id).length > 0).length;
+        if (it.branch === 'writing') return BRANCHES.writing.milestones.filter((m) => l >= m).length;
+        if (it.branch === 'english') return l;
+        return Math.min(l, it.n);
+      }
+      function itemProgress(it) {
+        if (it.stub) return 0;
+        if (it.branch === 'blender')
+          return (
+            BRANCHES.blender.subs.reduce((a, x) => a + Math.min(entriesFor('blender', x.id).length, 10), 0) /
+            (BRANCHES.blender.subs.length * 10)
+          );
+        if (it.branch === 'writing') {
+          const m = BRANCHES.writing.milestones;
+          return Math.min(itemLevel(it) / m[m.length - 1], 1);
+        }
+        if (it.branch === 'english') return itemLevel(it) / BRANCHES.english.tiers.length;
+        return 0;
+      }
+      function barPct(it) {
+        const p = itemProgress(it);
+        return p > 0 ? Math.max(4, Math.round(p * 100)) : 0;
+      }
+      const SHAPES = {
+        // Blender — «Ковш»: ручка из трёх звёзд и чаша
+        blender: {
+          pts: [
+            [40, 150],
+            [92, 128],
+            [140, 112],
+            [150, 62],
+            [222, 50],
+            [236, 108],
+          ],
+          edges: [
+            [0, 1],
+            [1, 2],
+            [2, 3],
+            [3, 4],
+            [4, 5],
+            [5, 2],
+          ],
+        },
+        // Писательство — «Древо»: ствол и две ветви
+        writing: {
+          pts: [
+            [150, 190],
+            [150, 140],
+            [96, 96],
+            [204, 96],
+            [56, 46],
+            [244, 46],
+          ],
+          edges: [
+            [0, 1],
+            [1, 2],
+            [1, 3],
+            [2, 4],
+            [3, 5],
+          ],
+        },
+        // Английский — восходящий зигзаг-«W»: уровни идут вверх
+        english: {
+          pts: [
+            [28, 172],
+            [78, 122],
+            [124, 160],
+            [172, 96],
+            [218, 136],
+            [268, 62],
+          ],
+          edges: [
+            [0, 1],
+            [1, 2],
+            [2, 3],
+            [3, 4],
+            [4, 5],
+          ],
+        },
+        ai: {
+          pts: [
+            [150, 32],
+            [222, 86],
+            [195, 172],
+            [105, 172],
+            [78, 86],
+          ],
+          edges: [
+            [0, 2],
+            [2, 4],
+            [4, 1],
+            [1, 3],
+            [3, 0],
+          ],
+        },
+        marketing: {
+          pts: [
+            [150, 34],
+            [92, 96],
+            [208, 96],
+            [150, 112],
+            [150, 188],
+          ],
+          edges: [
+            [0, 1],
+            [0, 2],
+            [0, 3],
+            [3, 4],
+          ],
+        },
+        comm: {
+          pts: [
+            [150, 40],
+            [56, 115],
+            [244, 115],
+            [150, 190],
+            [150, 115],
+          ],
+          edges: [
+            [0, 4],
+            [4, 3],
+            [1, 4],
+            [4, 2],
+          ],
+        },
+        uxvisual: {
+          pts: [
+            [52, 44],
+            [196, 50],
+            [112, 112],
+            [248, 146],
+            [150, 190],
+          ],
+          edges: [
+            [0, 1],
+            [1, 2],
+            [2, 3],
+            [3, 4],
+          ],
+        },
+      };
+      function pts(it) {
+        return SHAPES[it.key].pts;
+      }
+      function constSVG(it) {
+        const lit = litCount(it),
+          P = pts(it);
+        let g = '';
+        const isOn = (i) =>
+          it.branch === 'blender' ? entriesFor('blender', BRANCHES.blender.subs[i].id).length > 0 : i < lit;
+        SHAPES[it.key].edges.forEach(([a, b]) => {
+          const on = isOn(a) && isOn(b);
+          g += `<line x1="${P[a][0]}" y1="${P[a][1]}" x2="${P[b][0]}" y2="${P[b][1]}" stroke="${on ? '#7fe3ff' : '#3d4a7a'}" stroke-width="${on ? 1.6 : 1}" opacity="${on ? 0.95 : 0.5}"/>`;
+        });
+        P.forEach((p, i) => {
+          const on = isOn(i);
+          g += `<circle cx="${p[0]}" cy="${p[1]}" r="${on ? 4 : 2.6}" fill="${on ? '#ffb347' : '#6a75a8'}" ${on ? 'style="filter:drop-shadow(0 0 5px #ffb347)"' : ''}/>`;
+        });
+        const LB =
+          it.branch === 'blender'
+            ? BRANCHES.blender.subs.map((x) => {
+                const l = entriesFor('blender', x.id).length;
+                return { name: x.name, key: 'blender|' + x.id, mark: l || '' };
+              })
+            : it.branch === 'english'
+              ? BRANCHES.english.tiers.map((t) => ({
+                  name: t,
+                  key: 'english|' + t,
+                  mark: entriesFor('english', t).length ? '✓' : '',
+                }))
+              : it.branch === 'writing'
+                ? BRANCHES.writing.milestones.map((m) => ({ name: m + ' гл.', key: 'writing', mark: '' }))
+                : null;
+        if (LB)
+          LB.forEach((x, i) => {
+            const p = P[i],
+              on = isOn(i);
+            g += `<circle cx="${p[0]}" cy="${p[1]}" r="16" fill="transparent" data-sub="1" data-idx="${i}" data-key="${x.key}" data-name="${x.name}" style="cursor:pointer"/>`;
+            g += `<text x="${p[0]}" y="${p[1] - 10}" text-anchor="middle" font-size="11" fill="${on ? '#e8ecf6' : '#8f9bc2'}" style="pointer-events:none">${x.name}${x.mark ? `<tspan fill="#ffb347" dx="4">${x.mark}</tspan>` : ''}</text>`;
+          });
+        return `<svg viewBox="0 0 300 220">${g}</svg>`;
+      }
+      function drawSky() {
+        document.getElementById('track').innerHTML = ITEMS.map(
+          (it, i) => `<div class="const" data-i="${i}">${constSVG(it)}</div>`,
+        ).join('');
+        document.getElementById('names').innerHTML = ITEMS.map(
+          (it, i) =>
+            `<div class="cname" data-i="${i}"><span class="nm">${it.name}</span><b class="lv">${it.stub ? '' : itemLevel(it)}</b><div class="plate"><span class="pin"><i style="width:${barPct(it)}%"></i></span></div></div>`,
+        ).join('');
+        document.getElementById('charLevel').textContent = charLevel();
+        layout(true);
+        if (mode === 'zoom') refreshZoom();
+      }
+      function layout(instant) {
+        const nm = document.getElementById('names');
+        document.documentElement.style.setProperty(
+          '--nw',
+          Math.max(96, nm.clientWidth / (innerWidth < 700 ? 3 : 7)) + 'px',
+        );
+        document.querySelectorAll('.const,.cname').forEach((el) => {
+          const c = el.classList.contains('const'),
+            off = +el.dataset.i - sel,
+            ab = Math.abs(off);
+          if (instant) el.style.transition = 'none';
+          el.style.transform = c ? `translateX(${off * 88}%) scale(${off ? 0.68 : 1})` : `translateX(${off * 100}%)`;
+          el.style.opacity = c
+            ? ab === 0
+              ? 1
+              : ab === 1
+                ? 0.5
+                : ab === 2
+                  ? 0.2
+                  : 0
+            : ab === 0
+              ? 1
+              : ab <= 3
+                ? 0.8 - ab * 0.15
+                : 0;
+          el.style.pointerEvents = ab > (c ? 2 : 3) ? 'none' : 'auto';
+          el.classList.toggle('sel', off === 0);
+          if (instant) {
+            el.offsetHeight;
+            el.style.transition = '';
+          }
+        });
+        setDesc();
+      }
+      function setDesc() {
+        const it = ITEMS[sel];
+        document.getElementById('gname').textContent = it.group;
+        document.getElementById('desc').textContent = FLAVORS[it.key] || FLAVORS[it.branch] || '';
+      }
+      function go(n) {
+        const prevSel = sel;
+        sel = Math.max(0, Math.min(ITEMS.length - 1, n));
+        if (sel !== prevSel) SND.play('tick');
+        layout();
+        updateBg();
+      }
+      document.getElementById('prevBtn').onclick = () => go(sel - 1);
+      document.getElementById('nextBtn').onclick = () => go(sel + 1);
+      document.getElementById('openBtn').onclick = () => (mode === 'zoom' ? openPanel(zoomStars[zi].key) : enterZoom());
+      document.getElementById('track').addEventListener('click', (e) => {
+        const c = e.target.closest('.const');
+        if (!c || swiped) return;
+        const i = +c.dataset.i,
+          sb = e.target.closest('[data-sub]');
+        if (i !== sel) go(i);
+        else enterZoom(sb ? +sb.dataset.idx : 0);
+      });
+      document.getElementById('names').addEventListener('click', (e) => {
+        const c = e.target.closest('.cname');
+        if (c && !swiped) go(+c.dataset.i);
+      });
+      addEventListener('keydown', (e) => {
+        const k = e.key;
+        if (document.body.classList.contains('splash')) {
+          if (k === 'Enter' || k === ' ') {
+            e.preventDefault();
+            enterSite(true);
+          }
+          return;
+        }
+        if (LB.isOpen()) {
+          LB.key(e);
+          return;
+        }
+        if (document.getElementById('overlay').classList.contains('open')) {
+          if (k === 'Escape') closePanel();
+          return;
+        }
+        const tg = e.target;
+        if (
+          tg.tagName === 'SELECT' ||
+          tg.tagName === 'TEXTAREA' ||
+          (tg.tagName === 'INPUT' && !['range', 'file', 'checkbox'].includes(tg.type))
+        )
+          return;
+        if (e.code === 'KeyM') {
+          SND.toggle();
+          syncMute();
+          return;
+        }
+        if (e.code === 'KeyP') {
+          MUS.toggle();
+          return;
+        }
+        if (e.code === 'KeyN') {
+          MUS.next();
+          return;
+        }
+        if (e.code === 'KeyB') {
+          MUS.prev();
+          return;
+        }
+        if (e.key === 'Escape' && MUS.closeList()) return;
+        if (mode === 'zoom') {
+          if (k === 'ArrowLeft') {
+            e.preventDefault();
+            zgo(zi - 1);
+          } else if (k === 'ArrowRight') {
+            e.preventDefault();
+            zgo(zi + 1);
+          } else if (k === 'ArrowUp') {
+            e.preventDefault();
+            zdir(0, -1);
+          } else if (k === 'ArrowDown' || k === 'Escape' || k === 'Backspace') {
+            e.preventDefault();
+            exitZoom();
+          } else if (k === ' ' || k === 'Enter') {
+            e.preventDefault();
+            openPanel(zoomStars[zi].key);
+          }
+          return;
+        }
+        if (k === 'ArrowLeft') go(sel - 1);
+        else if (k === 'ArrowRight') go(sel + 1);
+        else if (k === ' ' || k === 'Enter' || k === 'ArrowUp') {
+          e.preventDefault();
+          enterZoom();
+        }
+      });
+      let sy = null;
+      ['stage', 'names'].forEach((id) =>
+        document.getElementById(id).addEventListener('pointerdown', (e) => {
+          sx = e.clientX;
+          sy = e.clientY;
+          swiped = false;
+        }),
+      );
+      addEventListener('pointerup', (e) => {
+        if (sx === null) return;
+        const dx = e.clientX - sx,
+          dy = e.clientY - sy;
+        sx = null;
+        const done = () => {
+          swiped = true;
+          setTimeout(() => {
+            swiped = false;
+          }, 60);
+        };
+        if (mode === 'zoom') {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) < 40) return;
+          done();
+          if (Math.abs(dx) > Math.abs(dy)) zgo(zi + (dx < 0 ? 1 : -1));
+          else if (dy > 0) exitZoom();
+          else zdir(0, -1);
+        } else if (Math.abs(dy) > 50 && Math.abs(dy) > Math.abs(dx) && dy < 0) {
+          done();
+          enterZoom();
+        } else if (Math.abs(dx) > 50) {
+          done();
+          go(sel + (dx < 0 ? 1 : -1));
+        }
+      });
+      document.getElementById('stage').addEventListener(
+        'wheel',
+        (e) => {
+          e.preventDefault();
+          const horiz = Math.abs(e.deltaX) > Math.abs(e.deltaY),
+            d = horiz ? e.deltaX : e.deltaY;
+          if (Date.now() - lastWheel > 350 && Math.abs(d) > 8) {
+            lastWheel = Date.now();
+            if (mode === 'zoom') zgo(zi + (d > 0 ? 1 : -1));
+            else go(sel + (d > 0 ? 1 : -1));
+          }
+        },
+        { passive: false },
+      );
+      FLAVORS.blender = 'Ремесло 3D-художника. Внутри шесть навыков — выбери звезду, чтобы записать результат.';
+      document.getElementById('track').addEventListener('mouseover', (e) => {
+        const t = e.target.closest('[data-sub]');
+        if (!t || !t.closest('.const.sel')) return;
+        document.getElementById('gname').textContent = ITEMS[sel].name + ' · ' + t.dataset.name;
+        document.getElementById('desc').textContent = FLAVORS[t.dataset.key] || FLAVORS[ITEMS[sel].key] || '';
+      });
+      document.getElementById('track').addEventListener('mouseout', (e) => {
+        if (e.target.closest('[data-sub]')) setDesc();
+      });
+      addEventListener('resize', () => {
+        layout(true);
+        if (mode === 'zoom') setVB(viewFor(zoomStars[zi].x, zoomStars[zi].y, ZOOM));
+      });
+
+      /* ===== Режим «внутри ветки»: камера влетает в созвездие, стрелки ← ↑ ↓ → двигают между звёздами ===== */
+      let zPrev = { i: -1, l: 0 };
+      let mode = 'carousel',
+        zi = 0,
+        zoomStars = [],
+        cam = null,
+        camRaf = 0;
+      const ZOOM = 2.3;
+      function starsOf(it) {
+        const P = pts(it),
+          cap = (v) => (v > 0 ? Math.max(0.04, Math.min(v, 1)) : 0);
+        if (it.branch === 'blender')
+          return BRANCHES.blender.subs.map((x, i) => {
+            const l = entriesFor('blender', x.id).length;
+            return {
+              key: 'blender|' + x.id,
+              name: x.name,
+              x: P[i][0],
+              y: P[i][1],
+              on: l > 0,
+              lvl: l,
+              pct: cap(l / 10),
+              meta: [
+                ['Работ', l],
+                ['Blender', branchLevel('blender')],
+              ],
+            };
+          });
+        if (it.branch === 'english')
+          return BRANCHES.english.tiers.map((t, i) => {
+            const c = entriesFor('english', t).length;
+            return {
+              key: 'english|' + t,
+              name: t,
+              x: P[i][0],
+              y: P[i][1],
+              on: c > 0,
+              lvl: c,
+              pct: cap(itemProgress(it)),
+              meta: [
+                ['Подтверждений', c],
+                ['Английский', branchLevel('english')],
+              ],
+            };
+          });
+        if (it.branch === 'writing') {
+          const l = entriesFor('writing').length;
+          return BRANCHES.writing.milestones.map((m, i) => ({
+            key: 'writing',
+            name: m + ' гл.',
+            x: P[i][0],
+            y: P[i][1],
+            on: l >= m,
+            lvl: l,
+            pct: cap(l / m),
+            meta: [
+              ['Глав', l],
+              ['Рубеж', m],
+            ],
+            desc: l >= m ? 'Рубеж в ' + m + ' глав достигнут.' : 'До рубежа в ' + m + ' глав осталось ' + (m - l) + '.',
+          }));
+        }
+        return [];
+      }
+      function aspect() {
+        const st = document.getElementById('stage');
+        return (st.clientWidth || 1000) / (st.clientHeight || 400);
+      }
+      function viewFor(x, y, z) {
+        const h = 220 / z,
+          w = h * aspect();
+        return [x - w / 2, y - h / 2, w, h];
+      }
+      function setVB(v) {
+        cam = v;
+        const el = document.getElementById('zsvg');
+        if (el) el.setAttribute('viewBox', v.map((n) => n.toFixed(2)).join(' '));
+      }
+      function flyVB(to, ms) {
+        cancelAnimationFrame(camRaf);
+        if (!ms || !cam) return setVB(to);
+        const from = cam.slice(),
+          t0 = performance.now();
+        const step = (t) => {
+          const k = Math.min(1, (t - t0) / ms),
+            e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+          setVB(from.map((v, i) => v + (to[i] - v) * e));
+          if (k < 1) camRaf = requestAnimationFrame(step);
+        };
+        camRaf = requestAnimationFrame(step);
+      }
+      function zoomSVG() {
+        let g = '';
+        SHAPES[ITEMS[sel].key].edges.forEach(([a, b]) => {
+          const A = zoomStars[a],
+            B = zoomStars[b],
+            on = A.on && B.on;
+          g += `<line x1="${A.x}" y1="${A.y}" x2="${B.x}" y2="${B.y}" stroke="${on ? '#7fe3ff' : '#3d4a7a'}" stroke-width="${on ? 0.7 : 0.4}" opacity="${on ? 0.95 : 0.55}"/>`;
+        });
+        zoomStars.forEach((s, i) => {
+          const c = s.on ? '#ffb347' : '#a493ff';
+          g += `<g class="zs ${s.on ? 'on' : ''} ${i === zi ? 'sel' : ''}" data-i="${i}">
+            <circle cx="${s.x}" cy="${s.y}" r="9" fill="transparent"/>
+            <circle class="halo" cx="${s.x}" cy="${s.y}" r="5" fill="${c}"/>
+            <circle class="core" cx="${s.x}" cy="${s.y}" r="2.2" fill="${c}"/>
+            <text x="${s.x}" y="${s.y - 5}">${s.name}</text></g>`;
+        });
+        document.getElementById('zoomLayer').innerHTML = `<svg id="zsvg" viewBox="0 0 300 220">${g}</svg>`;
+      }
+      function updateBg() {
+        const r = document.documentElement.style;
+        if (mode === 'zoom' && zoomStars[zi]) {
+          r.setProperty('--bs', '1.4');
+          r.setProperty('--bx', (150 - zoomStars[zi].x) * 1.8 + 'px');
+          r.setProperty('--by', (110 - zoomStars[zi].y) * 1.8 + 'px');
+        } else {
+          r.setProperty('--bs', '1.08');
+          r.setProperty('--bx', -sel * 22 + 'px');
+          r.setProperty('--by', '0px');
+        }
+      }
+      function updateTop() {
+        const z = mode === 'zoom';
+        document.getElementById('hintTxt').textContent = z
+          ? '← → — между звёздами · ↑ — выше · ↓ или Esc — выйти · Space — ' +
+            (SHOWCASE ? 'смотреть работы' : 'записать работу')
+          : '← → — листать ветки · ↑ или Space — войти в ветку';
+        document.getElementById('openLbl').textContent = z
+          ? SHOWCASE
+            ? 'Смотреть работы'
+            : 'Записать работу'
+          : 'Войти в ветку';
+      }
+      function updateZoomUI() {
+        const it = ITEMS[sel],
+          s = zoomStars[zi];
+        if (!s) return;
+        document.querySelectorAll('.zs').forEach((g) => g.classList.toggle('sel', +g.dataset.i === zi));
+        document.getElementById('gname').textContent = it.name + ' · ' + s.name;
+        document.getElementById('desc').textContent = s.desc || FLAVORS[s.key] || FLAVORS[it.key] || '';
+        const pct = Math.round(s.pct * 100);
+        document.getElementById('zhName').textContent = s.name;
+        document.getElementById('zhLvl').textContent = s.lvl;
+        document.getElementById('zbarFill').style.width = pct + '%';
+        document.getElementById('zmA').textContent = s.meta[0][0];
+        document.getElementById('zmAv').textContent = s.meta[0][1];
+        document.getElementById('zmB').textContent = s.meta[1][0];
+        document.getElementById('zmBv').textContent = s.meta[1][1];
+        if (zPrev.i === zi && s.lvl > zPrev.l) SND.play('level');
+        if (zPrev.i === zi && s.lvl > zPrev.l)
+          ['zhLvl', 'zmAv', 'zmBv'].forEach((id) => {
+            const el = document.getElementById(id);
+            el.classList.remove('up');
+            void el.offsetWidth;
+            el.classList.add('up');
+          });
+        zPrev = { i: zi, l: s.lvl };
+        updateBg();
+      }
+      function enterZoom(startI) {
+        const it = ITEMS[sel];
+        if (it.stub) return;
+        SND.play('wind');
+        mode = 'zoom';
+        zoomStars = starsOf(it);
+        zi = startI || 0;
+        zPrev = { i: -1, l: 0 };
+        zoomSVG();
+        document.getElementById('stage').classList.add('zoomed');
+        document.body.classList.add('zm');
+        cam = null;
+        setVB(viewFor(150, 110, 1.05));
+        updateZoomUI();
+        updateTop();
+        requestAnimationFrame(() => flyVB(viewFor(zoomStars[zi].x, zoomStars[zi].y, ZOOM), 750));
+      }
+      function exitZoom() {
+        if (mode !== 'zoom') return;
+        SND.play('wind');
+        mode = 'carousel';
+        flyVB(viewFor(150, 110, 1.05), 450);
+        document.getElementById('stage').classList.remove('zoomed');
+        document.body.classList.remove('zm');
+        setDesc();
+        updateTop();
+        updateBg();
+      }
+      function pickStar(from, dx, dy) {
+        const f = zoomStars[from];
+        let best = -1,
+          bs = 1e9,
+          loose = -1,
+          ls = 1e9;
+        zoomStars.forEach((s, i) => {
+          if (i === from) return;
+          const vx = s.x - f.x,
+            vy = s.y - f.y,
+            along = vx * dx + vy * dy;
+          if (along <= 0.5) return;
+          const perp = Math.abs(vx * dy - vy * dx),
+            sc = along + perp * 1.6;
+          if (perp <= along * 1.7 && sc < bs) {
+            bs = sc;
+            best = i;
+          }
+          if (sc < ls) {
+            ls = sc;
+            loose = i;
+          }
+        });
+        return best >= 0 ? best : loose;
+      }
+      function zgo(i) {
+        if (i < 0 || i === zi || !zoomStars[i]) return;
+        SND.play('tick');
+        zi = i;
+        updateZoomUI();
+        flyVB(viewFor(zoomStars[i].x, zoomStars[i].y, ZOOM), 550);
+      }
+      function zdir(dx, dy) {
+        zgo(pickStar(zi, dx, dy));
+      }
+      function refreshZoom() {
+        zoomStars = starsOf(ITEMS[sel]);
+        const keep = cam;
+        zoomSVG();
+        cam = null;
+        setVB(keep || viewFor(zoomStars[zi].x, zoomStars[zi].y, ZOOM));
+        updateZoomUI();
+      }
+      document.getElementById('zback').onclick = exitZoom;
+      document.getElementById('zoomLayer').addEventListener('click', (e) => {
+        const g = e.target.closest('.zs');
+        if (!g || swiped) return;
+        +g.dataset.i === zi ? openPanel(zoomStars[zi].key) : zgo(+g.dataset.i);
+      });
+      updateTop();
+      updateBg();
+
+      function openPanel(key) {
+        const [branch, sub] = key.split('|');
+        const b = BRANCHES[branch];
+        const body = document.getElementById('panelBody');
+        if (b.type === 'stub') {
+          body.innerHTML = `<button class="closeBtn" onclick="closePanel()">×</button>
+      <h2>${b.name}</h2><div class="stubNote">Эта ветка пока заглушка — вернёмся к ней позже, когда дойдут руки решить, как её отслеживать.</div>`;
+        } else if (b.type === 'multi' && !sub) {
+          const rows = b.subs
+            .map(
+              (x) =>
+                `<button type="button" class="subRow" onclick="openPanel('blender|${x.id}')"><span>${x.name}</span><b>${entriesFor(branch, x.id).length}</b></button>`,
+            )
+            .join('');
+          body.innerHTML = `<button class="closeBtn" onclick="closePanel()">×</button>
+      <h2>${b.name}</h2><div class="sub">Общий уровень: ${branchLevel(branch)} · ${SHOWCASE ? 'выбери навык, чтобы посмотреть работы' : 'выбери навык, чтобы записать результат'}</div>
+      <div class="entries">${rows}</div>`;
+        } else if (b.type === 'multi') {
+          const s = b.subs.find((x) => x.id === sub);
+          const list = entriesFor(branch, sub).sort((a, c) => c.id - a.id);
+          body.innerHTML = `<button class="closeBtn" onclick="closePanel()">×</button>
+      <button class="backBtn" onclick="openPanel('blender')">‹ Все навыки Blender</button>
+      <h2>${b.name} · ${s.name}</h2>
+      <div class="sub">Уровень: ${list.length}</div>
+      ${renderEntries(list)}
+      ${addForm(branch, sub, 'Загрузи рендер и опиши, что сделал')}`;
+        } else if (b.type === 'count') {
+          const list = entriesFor(branch).sort((a, c) => c.id - a.id);
+          const next = b.milestones.find((m) => m > list.length) || b.milestones[b.milestones.length - 1];
+          body.innerHTML = `<button class="closeBtn" onclick="closePanel()">×</button>
+      <h2>${b.name}</h2>
+      <div class="sub">Глав опубликовано: ${list.length} · следующий рубеж: ${next}</div>
+      <div class="progressRow"><div class="bar"><i style="width:${Math.min(100, (list.length / next) * 100)}%"></i></div></div>
+      ${renderEntries(list)}
+      ${addForm(branch, null, 'Отметь опубликованную главу')}`;
+        } else if (b.type === 'tier') {
+          const tierRow = b.tiers
+            .map((t) => {
+              const done = entriesFor(branch, t).length > 0;
+              return `<button type="button" class="tierBtn ${done ? 'done' : ''} ${sub === t ? 'active' : ''}" onclick="openPanel('english|${t}')">${t}${done ? ' ✓' : ''}</button>`;
+            })
+            .join('');
+          body.innerHTML = `<button class="closeBtn" onclick="closePanel()">×</button>
+      <h2>${b.name}${sub ? ' · ' + sub : ''}</h2>
+      <div class="tierRow">${tierRow}</div>
+      ${renderEntries(entriesFor(branch, sub).sort((a, c) => c.id - a.id))}
+      ${addForm(branch, '', 'Подтверди достигнутый уровень', true)}`;
+        }
+        document.getElementById('overlay').classList.add('open');
+        const tsel = body.querySelector('select[name=tier]');
+        if (tsel && sub) tsel.value = sub;
+        const f = document.getElementById('entryForm');
+        if (f) f.addEventListener('submit', (e) => submitEntry(e, branch, sub, b.type));
+      }
+      let GAL = [];
+      const escH = (t) =>
+        String(t).replace(
+          /[&<>"']/g,
+          (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c],
+        );
+      const TEXT_EXT = /\.(txt|md|markdown|csv|json|log)$/i;
+      const VIDEO_EXT = /\.(mp4|m4v|mov|webm|mkv|ogv|avi)$/i;
+      // Браузеру нужен «понятный» MIME: .mov из Blender (video/quicktime) в Chrome без этого не играет
+      function videoMime(name, type) {
+        const ext = ((name || '').split('.').pop() || '').toLowerCase();
+        const map = {
+          mp4: 'video/mp4',
+          m4v: 'video/mp4',
+          mov: 'video/mp4',
+          webm: 'video/webm',
+          mkv: 'video/webm',
+          ogv: 'video/ogg',
+          avi: 'video/x-msvideo',
+        };
+        if (map[ext]) return map[ext];
+        const t = (type || '').toLowerCase();
+        if (t === 'video/quicktime') return 'video/mp4';
+        return t.startsWith('video/') ? t : 'video/mp4';
+      }
+      function dataUrlToBlob(url, type) {
+        const i = url.indexOf(','),
+          bin = atob(url.slice(i + 1)),
+          arr = new Uint8Array(bin.length);
+        for (let k = 0; k < bin.length; k++) arr[k] = bin.charCodeAt(k);
+        return new Blob([arr], { type: type || url.slice(5, i).split(';')[0] });
+      }
+      const URLS = new Map();
+      function mediaUrl(e) {
+        if (e.url) return e.url;
+        if (e.id != null && URLS.has(e.id)) return URLS.get(e.id);
+        let u = '';
+        if (e.blob) u = URL.createObjectURL(e.blob);
+        else if (e.fileDataUrl)
+          u =
+            kindOf(e) === 'video'
+              ? URL.createObjectURL(dataUrlToBlob(e.fileDataUrl, videoMime(e.fileName, e.fileType)))
+              : e.fileDataUrl;
+        if (e.id != null) URLS.set(e.id, u);
+        return u;
+      }
+      function fileKind(type, name) {
+        const t = (type || '').toLowerCase();
+        if (t.startsWith('image')) return 'image';
+        if (t.startsWith('video') || VIDEO_EXT.test(name || '')) return 'video';
+        if (t.startsWith('text') || TEXT_EXT.test(name || '')) return 'text';
+        return 'file';
+      }
+      function kindOf(e) {
+        if (!e.fileDataUrl && !e.blob && !e.url && e.text == null) return 'note';
+        return e.kind || fileKind(e.fileType, e.fileName);
+      }
+      const textOf = (e, head) => (e.text != null ? String(e.text) : e.fileDataUrl ? b64Text(e.fileDataUrl, head) : '');
+      function normalizeWork(w, i, base) {
+        const name = w.name || (w.file || '').split('/').pop() || '';
+        const url = w.url || (w.file ? base + w.file : '');
+        const type = w.type || '';
+        const kind = w.kind || (w.text != null ? 'text' : url ? fileKind(type, name) : 'note');
+        return {
+          id: w.id != null ? w.id : i + 1,
+          branch: w.branch,
+          sub: w.sub || null,
+          note: w.note || '',
+          date: w.date || '',
+          kind,
+          fileName: name,
+          fileType: type,
+          url,
+          text: typeof w.text === 'string' ? w.text : undefined,
+        };
+      }
+      function b64Text(url, head) {
+        try {
+          const i = url.indexOf(',');
+          if (i < 0) return '';
+          let b = url.slice(i + 1);
+          if (head) b = b.slice(0, 1200);
+          b = b.slice(0, b.length - (b.length % 4));
+          const bin = atob(b),
+            bytes = new Uint8Array(bin.length);
+          for (let k = 0; k < bin.length; k++) bytes[k] = bin.charCodeAt(k);
+          return new TextDecoder('utf-8').decode(bytes);
+        } catch (err) {
+          return '';
+        }
+      }
+      function galItem(e, i) {
+        const k = kindOf(e),
+          ext = ((e.fileName || '').split('.').pop() || '').toUpperCase().slice(0, 5);
+        let inner = '',
+          badge = '';
+        if (k === 'image') inner = `<img src="${mediaUrl(e)}" alt="" loading="lazy" />`;
+        else if (k === 'video') {
+          inner = `<video src="${mediaUrl(e)}#t=0.1" muted playsinline preload="metadata"></video><span class="gplay">▶</span>`;
+          badge = 'VIDEO';
+        } else if (k === 'text') {
+          inner = `<div class="gtx">${escH(textOf(e, true).slice(0, 220))}</div>`;
+          badge = ext || 'TXT';
+        } else if (k === 'file') {
+          inner = `<div class="gfile">${escH(ext || 'ФАЙЛ')}</div>`;
+        } else inner = `<div class="gtx big">${escH(e.note || '')}</div>`;
+        const cap = k === 'note' ? '' : escH(e.note || e.fileName || '');
+        return `<div class="gi" data-gi="${i}" tabindex="0">${inner}${badge ? `<span class="gbadge">${badge}</span>` : ''}<div class="gcap">${cap}</div></div>`;
+      }
+      function renderEntries(list) {
+        GAL = list;
+        if (!list.length)
+          return `<div class="empty">${SHOWCASE ? 'Здесь пока нет работ.' : 'Пока нет работ — добавь первую ниже.'}</div>`;
+        return `<div class="gal">` + list.map(galItem).join('') + `</div>`;
+      }
+      const LB = (() => {
+        const q = (id) => document.getElementById(id);
+        let i = 0,
+          sx = null;
+        const isOpen = () => q('lb').classList.contains('open');
+        function show(n) {
+          if (!GAL.length) return;
+          i = (n + GAL.length) % GAL.length;
+          const e = GAL[i],
+            k = kindOf(e),
+            b = q('lbBody');
+          b.innerHTML = '';
+          if (k === 'image') {
+            const im = new Image();
+            im.src = mediaUrl(e);
+            im.alt = '';
+            b.appendChild(im);
+          } else if (k === 'video') {
+            const v = document.createElement('video');
+            v.controls = true;
+            v.playsInline = true;
+            v.preload = 'metadata';
+            v.addEventListener('error', () => {
+              b.innerHTML = '';
+              const d = document.createElement('div');
+              d.className = 'lbtext';
+              d.textContent =
+                'Не удалось воспроизвести это видео: браузер не поддерживает его формат или кодек.\n\n' +
+                'Из Blender: Output Properties → Output → File Format: FFmpeg Video; Encoding → Container: MPEG-4 (или QuickTime); ' +
+                'Video Codec: H.264; Audio Codec: AAC. Кодеки вроде PNG, DNxHD, ProRes и контейнеры AVI/MKV браузеры обычно не играют.';
+              const a = document.createElement('a');
+              a.href = mediaUrl(e);
+              a.download = e.fileName || 'video';
+              a.textContent = 'Скачать файл';
+              d.appendChild(a);
+              b.appendChild(d);
+            });
+            v.src = mediaUrl(e);
+            b.appendChild(v);
+          } else {
+            const d = document.createElement('div');
+            d.className = 'lbtext';
+            if (k === 'text') {
+              const t = textOf(e);
+              if (t || !e.url) d.textContent = t.length > 300000 ? t.slice(0, 300000) + '\n…' : t;
+              else {
+                d.textContent = 'Загрузка…';
+                fetch(e.url)
+                  .then((r) => r.text())
+                  .then((x) => (d.textContent = x.slice(0, 300000)))
+                  .catch(() => {
+                    d.textContent = 'Не удалось загрузить текст.';
+                    const a = document.createElement('a');
+                    a.href = e.url;
+                    a.target = '_blank';
+                    a.rel = 'noopener';
+                    a.textContent = 'Открыть файл';
+                    d.appendChild(a);
+                  });
+              }
+            } else if (k === 'note') d.textContent = e.note || '';
+            else d.textContent = 'Этот тип файла нельзя показать здесь: ' + (e.fileName || 'файл');
+            b.appendChild(d);
+          }
+          q('lbT').textContent = e.note || e.fileName || '';
+          q('lbM').textContent = [e.date, e.fileName && e.note ? e.fileName : '', i + 1 + ' / ' + GAL.length]
+            .filter(Boolean)
+            .join(' · ');
+          q('lbPrev').style.visibility = q('lbNext').style.visibility = GAL.length > 1 ? 'visible' : 'hidden';
+        }
+        function open(n) {
+          q('lb').classList.add('open');
+          show(n);
+        }
+        function close() {
+          q('lb').classList.remove('open');
+          q('lbBody').innerHTML = '';
+        }
+        function key(e) {
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            close();
+          } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            show(i + 1);
+          } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            show(i - 1);
+          }
+        }
+        q('lbClose').onclick = close;
+        q('lbPrev').onclick = () => show(i - 1);
+        q('lbNext').onclick = () => show(i + 1);
+        q('lb').addEventListener('click', (e) => {
+          if (e.target.id === 'lb') close();
+        });
+        q('lbBody').addEventListener('pointerdown', (e) => (sx = e.clientX));
+        q('lbBody').addEventListener('pointerup', (e) => {
+          if (sx === null) return;
+          const dx = e.clientX - sx;
+          sx = null;
+          if (Math.abs(dx) > 70) show(i + (dx < 0 ? 1 : -1));
+        });
+        q('panelBody').addEventListener(
+          'error',
+          (ev) => {
+            const v = ev.target;
+            if (!v || v.tagName !== 'VIDEO') return;
+            const d = document.createElement('div');
+            d.className = 'gfile';
+            d.textContent = 'VIDEO';
+            const pl = v.parentNode.querySelector('.gplay');
+            if (pl) pl.remove();
+            v.replaceWith(d);
+          },
+          true,
+        );
+        q('panelBody').addEventListener('click', (e) => {
+          const g = e.target.closest('[data-gi]');
+          if (g) open(+g.dataset.gi);
+        });
+        q('panelBody').addEventListener('keydown', (e) => {
+          if (e.key !== 'Enter') return;
+          const g = e.target.closest('[data-gi]');
+          if (g) open(+g.dataset.gi);
+        });
+        return { open, close, key, isOpen };
+      })();
+      function addForm(branch, sub, noteLabel, isTier) {
+        if (SHOWCASE) return '';
+        const tierSelect = isTier
+          ? `<div><label>Уровень CEFR</label><select name="tier" required>${BRANCHES.english.tiers.map((t) => `<option value="${t}">${t}</option>`).join('')}</select></div>`
+          : '';
+        return `<form class="addForm" id="entryForm">
+    ${tierSelect}
+    <div><label>${noteLabel}</label><input type="text" name="note" placeholder="Например: рендер сцены таверны" ${isTier ? '' : 'required'}></div>
+    <div><label>Дата</label><input type="date" name="date" value="${new Date().toISOString().slice(0, 10)}"></div>
+    <div><label>Файл (картинка / видео / текст)</label><input type="file" name="file" accept="image/*,video/*,text/*,.mov,.mp4,.m4v,.webm,.mkv,.ogv,.avi,.txt,.md,.markdown,.csv,.json"><div class="fhint">Видео: MP4 или MOV с кодеком H.264. Из Blender: FFmpeg Video → H.264.</div></div>
+    <button class="btn" type="submit">Записать в карту</button>
+  </form>`;
+      }
+      async function submitEntry(e, branch, sub, type) {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const file = fd.get('file');
+        const actualSub = type === 'tier' ? fd.get('tier') : sub;
+        const rec = {
+          branch,
+          sub: actualSub || null,
+          note: fd.get('note') || '',
+          date: fd.get('date') || new Date().toISOString().slice(0, 10),
+        };
+        if (file && file.size > 0) {
+          rec.fileName = file.name;
+          rec.kind = fileKind(file.type, file.name);
+          rec.fileType = file.type || (rec.kind === 'text' ? 'text/plain' : '');
+          if (rec.kind === 'video') {
+            rec.fileType = videoMime(file.name, file.type);
+            rec.blob = new Blob([file], { type: rec.fileType });
+          } else
+            rec.fileDataUrl = await new Promise((res) => {
+              const r = new FileReader();
+              r.onload = () => res(r.result);
+              r.readAsDataURL(file);
+            });
+        }
+        const ok = await saveEntry(rec);
+        if (ok) {
+          ENTRIES = await loadEntries();
+          closePanel();
+          drawSky();
+        }
+      }
+      function closePanel() {
+        document.getElementById('overlay').classList.remove('open');
+      }
+      document.getElementById('overlay').addEventListener('click', (e) => {
+        if (e.target.id === 'overlay') closePanel();
+      });
+      document.getElementById('charName').addEventListener('change', (e) => {
+        try {
+          localStorage.setItem('skilltree_name', e.target.value);
+        } catch (err) {}
+      });
+      try {
+        const savedName = localStorage.getItem('skilltree_name');
+        if (savedName) document.getElementById('charName').value = savedName;
+      } catch (err) {}
+
+      function enterSite(withMusic) {
+        const sp = document.getElementById('splash');
+        sp.classList.add('out');
+        setTimeout(() => document.body.classList.remove('splash'), 600);
+        if (withMusic) MUS.startFromGesture();
+      }
+      document.getElementById('sEnter').onclick = () => enterSite(true);
+      document.getElementById('sQuiet').onclick = () => enterSite(false);
+      (async function init() {
+        let site = null;
+        if (!new URLSearchParams(location.search).has('edit')) {
+          try {
+            const r = await fetch('works.json', { cache: 'no-cache' });
+            if (r.ok) site = await r.json();
+          } catch (e) {}
+        }
+        if (site && typeof site === 'object') {
+          SHOWCASE = true;
+          SITE = site;
+          document.body.classList.add('showcase');
+          let base = site.mediaBase || '';
+          if (base && !base.endsWith('/')) base += '/';
+          ENTRIES = (site.works || []).map((w, i) => normalizeWork(w, i, base));
+          const songs = (site.music || [])
+            .map((t) => ({
+              name:
+                t.title ||
+                (t.file || t.url || '')
+                  .split('/')
+                  .pop()
+                  .replace(/\.[^.]+$/, ''),
+              url: t.url || (t.file ? base + t.file : ''),
+            }))
+            .filter((t) => t.url);
+          if (site.title) {
+            document.title = site.title;
+            document.getElementById('sTitle').textContent = site.title;
+          }
+          if (site.subtitle) document.getElementById('sSub').textContent = site.subtitle;
+          if (site.name) document.getElementById('charName').value = site.name;
+          document.getElementById('charName').readOnly = true;
+          drawSky();
+          MUS.setRemote(songs);
+          if (songs.length) document.body.classList.add('splash');
+          else document.body.classList.add('nomusic');
+          return;
+        }
+        try {
+          db = await openDB();
+          ENTRIES = await loadEntries();
+        } catch (e) {
+          ENTRIES = [];
+        }
+        drawSky();
+        try {
+          await MUS.init();
+        } catch (e) {}
+      })();
+    </script>
+  </body>
+</html>

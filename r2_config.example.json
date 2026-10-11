@@ -1,0 +1,7 @@
+{
+  "account_id": "ID аккаунта Cloudflare (страница R2)",
+  "access_key_id": "Access Key ID из API-токена R2",
+  "secret_access_key": "Secret Access Key из API-токена R2",
+  "bucket": "имя-хранилища",
+  "public_base_url": "https://pub-xxxxxxxx.r2.dev"
+}

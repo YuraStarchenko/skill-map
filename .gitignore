@@ -1,0 +1,8 @@
+# секреты — никогда не выкладывать
+r2_config.json
+
+# служебное
+works.json.bak
+*.tmp
+__pycache__/
+.DS_Store
