@@ -4,15 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Карта навыков</title>
-    <meta name="description" content="Интерактивная карта навыков: работы по Blender, писательству и английскому." />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Карта навыков" />
-    <meta
-      property="og:description"
-      content="Интерактивная карта навыков: работы по Blender, писательству и английскому."
-    />
-    <!-- Когда страница будет опубликована, добавь сюда картинку 1200x630 для превью в LinkedIn:
-    <meta property="og:image" content="https://.../preview.jpg" /> -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&family=Fira+Sans+Extra+Condensed:wght@400;500&display=swap"
@@ -1523,105 +1514,9 @@
         margin-top: 14px;
         color: var(--gold);
       }
-      /* ===== Режим «витрина» ===== */
-      .splash {
-        position: fixed;
-        inset: 0;
-        z-index: 50;
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 14px;
-        padding: 24px;
-        text-align: center;
-        color: #fff;
-        background:
-          radial-gradient(ellipse at 20% 25%, rgba(31, 122, 130, 0.55), transparent 55%),
-          radial-gradient(ellipse at 80% 75%, rgba(181, 96, 47, 0.4), transparent 50%), rgba(4, 7, 18, 0.94);
-        -webkit-backdrop-filter: blur(16px);
-        backdrop-filter: blur(16px);
-        transition: opacity 0.6s;
-      }
-      body.splash .splash {
-        display: flex;
-      }
-      .splash.out {
-        opacity: 0;
-        pointer-events: none;
-      }
-      .stitle {
-        font-family: 'Oswald', sans-serif;
-        font-weight: 300;
-        font-size: clamp(2rem, 7vw, 3.6rem);
-        letter-spacing: 0.04em;
-      }
-      .ssub {
-        color: #aab4d6;
-        font-size: 1.15rem;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-      }
-      .sbtn {
-        margin-top: 18px;
-        padding: 12px 54px;
-        font-family: 'Oswald', sans-serif;
-        font-weight: 300;
-        font-size: 1.2rem;
-        color: #fff;
-        cursor: pointer;
-        border-radius: 14px;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.06));
-        -webkit-backdrop-filter: blur(18px);
-        backdrop-filter: blur(18px);
-        border: 1.5px solid rgba(255, 255, 255, 0.45);
-        box-shadow:
-          0 10px 30px rgba(0, 0, 0, 0.4),
-          inset 0 1px 0 rgba(255, 255, 255, 0.5);
-      }
-      .sbtn:hover {
-        color: var(--gold);
-        border-color: var(--gold);
-      }
-      .snomusic {
-        background: none;
-        border: none;
-        color: #8f9bc2;
-        cursor: pointer;
-        font-size: 0.95rem;
-        text-decoration: underline;
-      }
-      .snote {
-        max-width: 360px;
-        color: #6f7aa0;
-        font-size: 0.82rem;
-      }
-      body.showcase #pFav,
-      body.showcase #pAdd,
-      body.showcase .pdel,
-      body.showcase #charName {
-        pointer-events: none;
-      }
-      body.showcase #pFav,
-      body.showcase #pAdd,
-      body.showcase .pdel {
-        display: none;
-      }
-      body.showcase.nomusic #pToggle,
-      body.showcase.nomusic #player,
-      body.showcase.nomusic #plist {
-        display: none;
-      }
     </style>
   </head>
   <body>
-    <div class="splash" id="splash">
-      <div class="stitle" id="sTitle">Карта навыков</div>
-      <div class="ssub" id="sSub">Портфолио</div>
-      <button class="sbtn" id="sEnter" type="button">Войти</button>
-      <button class="snomusic" id="sQuiet" type="button">Войти без музыки</button>
-      <div class="snote">Со звуком: музыка начнёт играть после входа. Выключить её можно в плеере.</div>
-    </div>
     <div id="bg"></div>
     <div class="topbar">
       <div class="id">
@@ -1829,8 +1724,6 @@
         document.getElementById('rdesc').textContent = 'Наведи или нажми на звезду, чтобы узнать о ветке подробнее.';
       }
       let ENTRIES = [];
-      let SHOWCASE = false,
-        SITE = null;
       let db;
       function openDB() {
         return new Promise((res, rej) => {
@@ -2007,31 +1900,16 @@
             o.start(t);
             o.stop(t + 0.06);
           },
-          wind() {
-            // ветер: только мягкий шум, без тонов и без эха; один и тот же звук для входа и выхода
-            const t = ctx.currentTime,
-              dur = 0.8;
-            const src = ctx.createBufferSource(),
-              bp = ctx.createBiquadFilter(),
-              lp = ctx.createBiquadFilter(),
-              g = ctx.createGain();
-            src.buffer = noise;
-            bp.type = 'bandpass';
-            bp.Q.value = 0.7;
-            bp.frequency.setValueAtTime(500, t);
-            bp.frequency.linearRampToValueAtTime(1100, t + dur * 0.5);
-            bp.frequency.linearRampToValueAtTime(700, t + dur);
-            lp.type = 'lowpass';
-            lp.frequency.value = 2200;
-            g.gain.setValueAtTime(0.0001, t);
-            g.gain.linearRampToValueAtTime(0.32, t + 0.28);
-            g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-            src.connect(bp);
-            bp.connect(lp);
-            lp.connect(g);
-            g.connect(master);
-            src.start(t, Math.random() * 0.15);
-            src.stop(t + dur + 0.05);
+          enter() {
+            const t = ctx.currentTime;
+            sweep(t, 0.7, 250, 2400, 0.22);
+            tone(110, t, 0.9, 0.12, 'sine', 220);
+            tone(1568, t + 0.35, 0.6, 0.04, 'triangle');
+          },
+          exit() {
+            const t = ctx.currentTime;
+            sweep(t, 0.5, 2200, 260, 0.18);
+            tone(220, t, 0.6, 0.1, 'sine', 110);
           },
           level() {
             const t = ctx.currentTime;
@@ -2206,12 +2084,8 @@
             } catch (e) {}
           }
           cur = i;
-          url = null;
-          if (tracks[i].url) A.src = tracks[i].url;
-          else {
-            url = URL.createObjectURL(tracks[i].blob);
-            A.src = url;
-          }
+          url = URL.createObjectURL(tracks[i].blob);
+          A.src = url;
           loaded = true;
           try {
             localStorage.setItem('skilltree_track', String(tracks[i].id));
@@ -2399,18 +2273,6 @@
             const was = $('plist').classList.contains('open') || closePops();
             $('plist').classList.remove('open');
             return was;
-          },
-          setRemote(list) {
-            tracks = list.map((t, k) => ({ id: k + 1, name: t.name, url: t.url }));
-            cur = tracks.length ? 0 : -1;
-            loaded = false;
-            ui();
-            progress();
-          },
-          startFromGesture() {
-            if (!tracks.length) return;
-            playIndex(cur >= 0 ? cur : 0);
-            if (!$('player').classList.contains('open')) $('pToggle').click();
           },
           async init() {
             await migrateOld();
@@ -2703,13 +2565,6 @@
       });
       addEventListener('keydown', (e) => {
         const k = e.key;
-        if (document.body.classList.contains('splash')) {
-          if (k === 'Enter' || k === ' ') {
-            e.preventDefault();
-            enterSite(true);
-          }
-          return;
-        }
         if (LB.isOpen()) {
           LB.key(e);
           return;
@@ -2955,14 +2810,9 @@
       function updateTop() {
         const z = mode === 'zoom';
         document.getElementById('hintTxt').textContent = z
-          ? '← → — между звёздами · ↑ — выше · ↓ или Esc — выйти · Space — ' +
-            (SHOWCASE ? 'смотреть работы' : 'записать работу')
+          ? '← → — между звёздами · ↑ — выше · ↓ или Esc — выйти · Space — записать работу'
           : '← → — листать ветки · ↑ или Space — войти в ветку';
-        document.getElementById('openLbl').textContent = z
-          ? SHOWCASE
-            ? 'Смотреть работы'
-            : 'Записать работу'
-          : 'Войти в ветку';
+        document.getElementById('openLbl').textContent = z ? 'Записать работу' : 'Войти в ветку';
       }
       function updateZoomUI() {
         const it = ITEMS[sel],
@@ -2993,7 +2843,7 @@
       function enterZoom(startI) {
         const it = ITEMS[sel];
         if (it.stub) return;
-        SND.play('wind');
+        SND.play('enter');
         mode = 'zoom';
         zoomStars = starsOf(it);
         zi = startI || 0;
@@ -3009,7 +2859,7 @@
       }
       function exitZoom() {
         if (mode !== 'zoom') return;
-        SND.play('wind');
+        SND.play('exit');
         mode = 'carousel';
         flyVB(viewFor(150, 110, 1.05), 450);
         document.getElementById('stage').classList.remove('zoomed');
@@ -3085,7 +2935,7 @@
             )
             .join('');
           body.innerHTML = `<button class="closeBtn" onclick="closePanel()">×</button>
-      <h2>${b.name}</h2><div class="sub">Общий уровень: ${branchLevel(branch)} · ${SHOWCASE ? 'выбери навык, чтобы посмотреть работы' : 'выбери навык, чтобы записать результат'}</div>
+      <h2>${b.name}</h2><div class="sub">Общий уровень: ${branchLevel(branch)} · выбери навык, чтобы записать результат</div>
       <div class="entries">${rows}</div>`;
         } else if (b.type === 'multi') {
           const s = b.subs.find((x) => x.id === sub);
@@ -3158,7 +3008,6 @@
       }
       const URLS = new Map();
       function mediaUrl(e) {
-        if (e.url) return e.url;
         if (e.id != null && URLS.has(e.id)) return URLS.get(e.id);
         let u = '';
         if (e.blob) u = URL.createObjectURL(e.blob);
@@ -3178,27 +3027,8 @@
         return 'file';
       }
       function kindOf(e) {
-        if (!e.fileDataUrl && !e.blob && !e.url && e.text == null) return 'note';
+        if (!e.fileDataUrl && !e.blob) return 'note';
         return e.kind || fileKind(e.fileType, e.fileName);
-      }
-      const textOf = (e, head) => (e.text != null ? String(e.text) : e.fileDataUrl ? b64Text(e.fileDataUrl, head) : '');
-      function normalizeWork(w, i, base) {
-        const name = w.name || (w.file || '').split('/').pop() || '';
-        const url = w.url || (w.file ? base + w.file : '');
-        const type = w.type || '';
-        const kind = w.kind || (w.text != null ? 'text' : url ? fileKind(type, name) : 'note');
-        return {
-          id: w.id != null ? w.id : i + 1,
-          branch: w.branch,
-          sub: w.sub || null,
-          note: w.note || '',
-          date: w.date || '',
-          kind,
-          fileName: name,
-          fileType: type,
-          url,
-          text: typeof w.text === 'string' ? w.text : undefined,
-        };
       }
       function b64Text(url, head) {
         try {
@@ -3220,12 +3050,12 @@
           ext = ((e.fileName || '').split('.').pop() || '').toUpperCase().slice(0, 5);
         let inner = '',
           badge = '';
-        if (k === 'image') inner = `<img src="${mediaUrl(e)}" alt="" loading="lazy" />`;
+        if (k === 'image') inner = `<img src="${e.fileDataUrl}" alt="" loading="lazy" />`;
         else if (k === 'video') {
           inner = `<video src="${mediaUrl(e)}#t=0.1" muted playsinline preload="metadata"></video><span class="gplay">▶</span>`;
           badge = 'VIDEO';
         } else if (k === 'text') {
-          inner = `<div class="gtx">${escH(textOf(e, true).slice(0, 220))}</div>`;
+          inner = `<div class="gtx">${escH(b64Text(e.fileDataUrl, true).slice(0, 220))}</div>`;
           badge = ext || 'TXT';
         } else if (k === 'file') {
           inner = `<div class="gfile">${escH(ext || 'ФАЙЛ')}</div>`;
@@ -3235,8 +3065,7 @@
       }
       function renderEntries(list) {
         GAL = list;
-        if (!list.length)
-          return `<div class="empty">${SHOWCASE ? 'Здесь пока нет работ.' : 'Пока нет работ — добавь первую ниже.'}</div>`;
+        if (!list.length) return `<div class="empty">Пока нет работ — добавь первую ниже.</div>`;
         return `<div class="gal">` + list.map(galItem).join('') + `</div>`;
       }
       const LB = (() => {
@@ -3253,7 +3082,7 @@
           b.innerHTML = '';
           if (k === 'image') {
             const im = new Image();
-            im.src = mediaUrl(e);
+            im.src = e.fileDataUrl;
             im.alt = '';
             b.appendChild(im);
           } else if (k === 'video') {
@@ -3282,23 +3111,8 @@
             const d = document.createElement('div');
             d.className = 'lbtext';
             if (k === 'text') {
-              const t = textOf(e);
-              if (t || !e.url) d.textContent = t.length > 300000 ? t.slice(0, 300000) + '\n…' : t;
-              else {
-                d.textContent = 'Загрузка…';
-                fetch(e.url)
-                  .then((r) => r.text())
-                  .then((x) => (d.textContent = x.slice(0, 300000)))
-                  .catch(() => {
-                    d.textContent = 'Не удалось загрузить текст.';
-                    const a = document.createElement('a');
-                    a.href = e.url;
-                    a.target = '_blank';
-                    a.rel = 'noopener';
-                    a.textContent = 'Открыть файл';
-                    d.appendChild(a);
-                  });
-              }
+              const t = b64Text(e.fileDataUrl);
+              d.textContent = t.length > 300000 ? t.slice(0, 300000) + '\n…' : t;
             } else if (k === 'note') d.textContent = e.note || '';
             else d.textContent = 'Этот тип файла нельзя показать здесь: ' + (e.fileName || 'файл');
             b.appendChild(d);
@@ -3368,7 +3182,6 @@
         return { open, close, key, isOpen };
       })();
       function addForm(branch, sub, noteLabel, isTier) {
-        if (SHOWCASE) return '';
         const tierSelect = isTier
           ? `<div><label>Уровень CEFR</label><select name="tier" required>${BRANCHES.english.tiers.map((t) => `<option value="${t}">${t}</option>`).join('')}</select></div>`
           : '';
@@ -3428,53 +3241,7 @@
         if (savedName) document.getElementById('charName').value = savedName;
       } catch (err) {}
 
-      function enterSite(withMusic) {
-        const sp = document.getElementById('splash');
-        sp.classList.add('out');
-        setTimeout(() => document.body.classList.remove('splash'), 600);
-        if (withMusic) MUS.startFromGesture();
-      }
-      document.getElementById('sEnter').onclick = () => enterSite(true);
-      document.getElementById('sQuiet').onclick = () => enterSite(false);
       (async function init() {
-        let site = null;
-        if (!new URLSearchParams(location.search).has('edit')) {
-          try {
-            const r = await fetch('works.json', { cache: 'no-cache' });
-            if (r.ok) site = await r.json();
-          } catch (e) {}
-        }
-        if (site && typeof site === 'object') {
-          SHOWCASE = true;
-          SITE = site;
-          document.body.classList.add('showcase');
-          let base = site.mediaBase || '';
-          if (base && !base.endsWith('/')) base += '/';
-          ENTRIES = (site.works || []).map((w, i) => normalizeWork(w, i, base));
-          const songs = (site.music || [])
-            .map((t) => ({
-              name:
-                t.title ||
-                (t.file || t.url || '')
-                  .split('/')
-                  .pop()
-                  .replace(/\.[^.]+$/, ''),
-              url: t.url || (t.file ? base + t.file : ''),
-            }))
-            .filter((t) => t.url);
-          if (site.title) {
-            document.title = site.title;
-            document.getElementById('sTitle').textContent = site.title;
-          }
-          if (site.subtitle) document.getElementById('sSub').textContent = site.subtitle;
-          if (site.name) document.getElementById('charName').value = site.name;
-          document.getElementById('charName').readOnly = true;
-          drawSky();
-          MUS.setRemote(songs);
-          if (songs.length) document.body.classList.add('splash');
-          else document.body.classList.add('nomusic');
-          return;
-        }
         try {
           db = await openDB();
           ENTRIES = await loadEntries();
